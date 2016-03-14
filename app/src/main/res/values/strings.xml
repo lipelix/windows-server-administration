@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">WindowsServerAdministration</string>
+    <string name="get_culture">getCulture</string>
+    <string name="heading_default">Welcome in Remote Administration</string>
+    <string name="title_activity_main">MainActivity</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="heading_get_culture">getCulture</string>
+    <string name="btn_run">Run</string>
+    <string name="tw_desc_default">Here could be some intro bullshit.</string>
+</resources>
