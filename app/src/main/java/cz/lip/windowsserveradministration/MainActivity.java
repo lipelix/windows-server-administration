@@ -15,8 +15,14 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import cz.lip.windowsserveradministration.communication.Api;
+import cz.lip.windowsserveradministration.fragment.CultureFragment;
+import cz.lip.windowsserveradministration.fragment.DefaultFragment;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    public Api api;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +48,8 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        api = Api.getInstance(this);
 
         changeFragment(R.id.fragment_container, new DefaultFragment());
     }
@@ -103,7 +111,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_send) {
 
         } else if (id == R.id.nav_culture) {
-            changeFragment(R.id.fragment_container, new DefaultFragment());
+            changeFragment(R.id.fragment_container, new CultureFragment());
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

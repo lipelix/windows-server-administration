@@ -17,6 +17,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    productFlavors {
+        prod {
+            buildConfigField 'String', 'API_URL', '"http://192.168.0.100:53978/"'
+        }
+    }
 }
 
 dependencies {
