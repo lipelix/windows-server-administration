@@ -63,6 +63,11 @@ public class UserFragment extends Fragment {
                     public void onError(VolleyError error) {
                         Toast.makeText(AppController.getAppContext(), error.getLocalizedMessage(), Toast.LENGTH_LONG).show();
                     }
+
+                    @Override
+                    public void onScriptError(String error) {
+                        Toast.makeText(AppController.getAppContext(), error, Toast.LENGTH_LONG).show();
+                    }
                 });
             }
         });
