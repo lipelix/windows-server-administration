@@ -3,30 +3,37 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="cz.lip.windowsserveradministration.fragment.CultureFragment"
+    tools:context="cz.lip.windowsserveradministration.fragment.UserFragment"
     android:weightSum="1">
-
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="80dp"
-        android:text="getCulture"
+        android:text="getADUser"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:gravity="left|center_vertical" />
 
-    <TextView
+    <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/tw_culture_output"
-        android:layout_gravity="center_horizontal"
-        android:layout_weight="0.13"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:inputType="textPersonName"
+        android:text="Name"
+        android:ems="10"
+        android:id="@+id/btn_user_name" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/btn_run"
-        android:id="@+id/btn_culture_run"
+        android:id="@+id/btn_user_run"
         android:layout_gravity="center_horizontal" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/tw_user_output"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="0.13"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
 </LinearLayout>

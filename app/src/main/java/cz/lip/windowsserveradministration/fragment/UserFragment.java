@@ -3,55 +3,60 @@ package cz.lip.windowsserveradministration.fragment;
 
 import android.os.Bundle;
 import android.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 import com.google.gson.Gson;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import cz.lip.windowsserveradministration.AppController;
 import cz.lip.windowsserveradministration.R;
 import cz.lip.windowsserveradministration.communication.Api;
 import cz.lip.windowsserveradministration.communication.VolleyCallback;
-import cz.lip.windowsserveradministration.communication.response.CultureResponse;
+import cz.lip.windowsserveradministration.communication.response.UserResponse;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class CultureFragment extends Fragment {
+public class UserFragment extends Fragment {
 
     protected Api api;
 
-    public CultureFragment() {
+    public UserFragment() {
         api = Api.getInstance(getActivity());
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        final View view = inflater.inflate(R.layout.fragment_culture, container, false);
+        final View view = inflater.inflate(R.layout.fragment_user, container, false);
 
-        Button button = (Button) view.findViewById(R.id.btn_culture_run);
+        Button button = (Button) view.findViewById(R.id.btn_user_run);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final TextView tw = (TextView) view.findViewById(R.id.tw_culture_output);
-                api.getCulture(new VolleyCallback() {
+                final TextView output = (TextView) view.findViewById(R.id.tw_user_output);
+                final EditText userName = (EditText) view.findViewById(R.id.btn_user_name);
+
+                if (userName.getText().toString().trim().length() < 1) {
+                    userName.setError(getResources().getString(R.string.error_empty_input));
+                    return;
+                }
+
+                api.getUser(String.valueOf(userName.getText()), new VolleyCallback() {
                     @Override
                     public void onSuccess(String response) {
                         Toast.makeText(AppController.getAppContext(), response, Toast.LENGTH_LONG).show();
                         Gson gson = new Gson();
-                        CultureResponse resp = gson.fromJson(response, CultureResponse.class);
-                        tw.setText(resp.toString());
+                        UserResponse resp = gson.fromJson(response, UserResponse.class);
+                        output.setText(resp.toString());
                     }
 
                     @Override

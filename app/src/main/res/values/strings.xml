@@ -14,4 +14,7 @@
     <string name="heading_get_culture">getCulture</string>
     <string name="btn_run">Run</string>
     <string name="tw_desc_default">Here could be some intro bullshit.</string>
+    <string name="get_user">getUser</string>
+    <string name="error_empty_input">Input can\'t be empty!</string>
+    <item name="btn_run" type="id">Run</item>
 </resources>

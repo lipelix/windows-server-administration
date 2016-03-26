@@ -19,7 +19,8 @@ android {
     }
     productFlavors {
         prod {
-            buildConfigField 'String', 'API_URL', '"http://192.168.0.100:53978/"'
+//            buildConfigField 'String', 'API_URL', '"http://192.168.0.100:53978/"'
+            buildConfigField 'String', 'API_URL', '"http://192.168.0.106/app/"'
         }
     }
 }
@@ -32,4 +33,5 @@ dependencies {
     compile 'com.google.code.gson:gson:2.2.+'
     compile 'com.android.support:design:23.1.1'
     compile 'com.android.support:support-v4:23.1.1'
+    compile 'com.google.android.gms:play-services-appindexing:8.1.0'
 }

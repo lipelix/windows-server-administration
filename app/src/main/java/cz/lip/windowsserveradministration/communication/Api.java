@@ -3,14 +3,17 @@ package cz.lip.windowsserveradministration.communication;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import cz.lip.windowsserveradministration.AppController;
@@ -20,6 +23,8 @@ import cz.lip.windowsserveradministration.BuildConfig;
  * Created by Libor on 5.3.2016.
  */
 public class Api {
+
+    private String TAG = "API";
 
     private static Api mInstance;
     private VolleySingleton volley;
@@ -47,7 +52,10 @@ public class Api {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        // Do something with the response
+                        // remove double quotes around response
+                        response = response.substring(1, response.length()-1);
+                        response = response.replace("\\\"", "\"");
+                        Log.d(TAG, response.toString());
                         callback.onSuccess(response);
                         progressDialog.dismiss();
                     }
@@ -55,6 +63,8 @@ public class Api {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        if (error.getMessage() != null)
+                            Log.d(TAG, error.getMessage());
                         callback.onError(error);
                         progressDialog.dismiss();
                     }
@@ -65,6 +75,11 @@ public class Api {
 
     public void getCulture(VolleyCallback callback) {
         String url = BuildConfig.API_URL + "api/pscripts/runscript/getCulture";
+        stringReq(url, callback);
+    }
+
+    public void getUser(String name, VolleyCallback callback) {
+        String url = BuildConfig.API_URL + "api/pscripts/runscript/getUser?User=" + name;
         stringReq(url, callback);
     }
 
