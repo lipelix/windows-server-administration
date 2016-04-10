@@ -7,6 +7,7 @@ import android.content.Context;
 public class AppController extends Application {
 
     private static AppController instance;
+    public static final String PREF_NAME = "cz.lip.windowsserveradministration";
 
     @Override
     public void onCreate() {

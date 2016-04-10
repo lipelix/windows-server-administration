@@ -1,7 +1,10 @@
-package cz.lip.windowsserveradministration;
+package cz.lip.windowsserveradministration.activity;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -15,10 +18,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 
+import cz.lip.windowsserveradministration.AppController;
+import cz.lip.windowsserveradministration.R;
 import cz.lip.windowsserveradministration.communication.Api;
 import cz.lip.windowsserveradministration.fragment.CultureFragment;
 import cz.lip.windowsserveradministration.fragment.DefaultFragment;
@@ -28,6 +34,7 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     public Api api;
+    private SharedPreferences pref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +62,8 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         api = Api.getInstance(this);
+        pref = this.getSharedPreferences(AppController.PREF_NAME, this.MODE_PRIVATE);
+        Toast.makeText(AppController.getAppContext(), pref.getString("NAME", "access_token"), Toast.LENGTH_LONG);
 
         changeFragment(R.id.fragment_container, new DefaultFragment());
     }
