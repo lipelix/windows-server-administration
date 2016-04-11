@@ -17,7 +17,7 @@
     <string name="get_user">getUser</string>
     <string name="error_empty_input">Input can\'t be empty!</string>
     <item name="btn_run" type="id">Run</item>
-    <string name="title_activity_login">Sign in</string>
+    <string name="title_activity_login">MooWin - Sign in</string>
 
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
@@ -33,4 +33,12 @@
     <string name="login">Login</string>
     <string name="error_invalid_login">Login format is invalid - only alphanumeric characters are allowed</string>
     <string name="login_msg">Login in progress...</string>
+    <string name="get_info">Info</string>
+    <string name="hint_password">Please enter your password</string>
+    <string name="ok_text">Ok</string>
+    <string name="cancel_text">Cancel</string>
+    <string name="action_logout">Logout</string>
+    <string name="action_exit">Exit</string>
+    <string name="host">Host</string>
+    <string name="error_invalid_host">Invalid form of host address</string>
 </resources>

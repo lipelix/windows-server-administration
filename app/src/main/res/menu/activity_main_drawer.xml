@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item  android:title="Scripts">
+    <group android:checkableBehavior="single">
+    <item
+        android:id="@+id/nav_info"
+        android:title="@string/get_info" />
+
+    <item android:title="Scripts">
         <menu>
             <group android:checkableBehavior="single">
                 <item
@@ -29,6 +34,7 @@
             </group>
         </menu>
     </item>
+    </group>
 
     <item android:title="Communicate">
         <menu>

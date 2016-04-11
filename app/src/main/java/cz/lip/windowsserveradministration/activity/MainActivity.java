@@ -4,11 +4,13 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -28,13 +30,14 @@ import cz.lip.windowsserveradministration.R;
 import cz.lip.windowsserveradministration.communication.Api;
 import cz.lip.windowsserveradministration.fragment.CultureFragment;
 import cz.lip.windowsserveradministration.fragment.DefaultFragment;
+import cz.lip.windowsserveradministration.fragment.InfoFragment;
 import cz.lip.windowsserveradministration.fragment.UserFragment;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    private String TAG = "MainActivity";
     public Api api;
-    private SharedPreferences pref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,8 +65,6 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         api = Api.getInstance(this);
-        pref = this.getSharedPreferences(AppController.PREF_NAME, this.MODE_PRIVATE);
-        Toast.makeText(AppController.getAppContext(), pref.getString("NAME", "access_token"), Toast.LENGTH_LONG);
 
         changeFragment(R.id.fragment_container, new DefaultFragment());
     }
@@ -98,10 +99,18 @@ public class MainActivity extends AppCompatActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_logout) {
+            AppController.invalidateToken();
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+            return true;
+        } else if (id == R.id.action_exit) {
+            AppController.invalidateToken();
+            finish();
             return true;
         }
+
 
         return super.onOptionsItemSelected(item);
     }
@@ -122,8 +131,8 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_share) {
 
-        } else if (id == R.id.nav_send) {
-
+        } else if (id == R.id.nav_info) {
+            changeFragment(R.id.fragment_container, new InfoFragment());
         } else if (id == R.id.nav_culture) {
             changeFragment(R.id.fragment_container, new CultureFragment());
         } else if (id == R.id.nav_user_get) {
@@ -133,6 +142,13 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.e(TAG, "resumed");
+        api.setActivityContext(this);
     }
 
     @Override

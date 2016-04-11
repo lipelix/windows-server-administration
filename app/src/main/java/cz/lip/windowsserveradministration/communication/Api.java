@@ -52,25 +52,38 @@ import cz.lip.windowsserveradministration.communication.response.ErrorResponse;
 public class Api {
 
     private String TAG = "API";
+    private String protocol = "https";
 
     private static Api mInstance;
     private VolleySingleton volley;
-    private static Context mCtx;
-    public ProgressDialog progressDialog;
+    private Context mCtx;
+    public static ProgressDialog progressDialog;
+    private String host;
+    private Context activityCtx;
 
 
     private Api(Context context) {
         mCtx = context;
         volley = VolleySingleton.getInstance();
-        progressDialog = new ProgressDialog(mCtx);
-        progressDialog.setMessage("Operation in progress...");
+//        host = AppController.getPref().getString("host", BuildConfig.API_URL);
     }
 
     public static synchronized Api getInstance(Context context) {
         if (mInstance == null) {
             mInstance = new Api(context);
         }
+
         return mInstance;
+    }
+
+    public void setActivityContext(Context ctx) {
+        activityCtx = ctx;
+        progressDialog = new ProgressDialog(activityCtx);
+        progressDialog.setMessage("Operation in progress...");
+    }
+
+    public void setHost(String url) {
+        host = url;
     }
 
     public void stringReq(final String url, final VolleyCallback callback) {
@@ -89,7 +102,7 @@ public class Api {
 
                         try {
                             JSONObject json = new JSONObject(response);
-                            if(!json.isNull("error")) {
+                            if (!json.isNull("error")) {
                                 callback.onScriptError(json.getString("error"));
                                 return;
                             }
@@ -105,11 +118,43 @@ public class Api {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         progressDialog.dismiss();
-                        if (error.getMessage() != null)
-                            Log.e(TAG, error.getMessage());
+
+                        if (error instanceof TimeoutError || error instanceof NoConnectionError) {
+                            Log.e(TAG, "TimeoutError: " + error.getNetworkTimeMs() + " ms");
+                            Toast.makeText(activityCtx, "TimeoutError: " + error.getNetworkTimeMs() + " ms", Toast.LENGTH_LONG).show();
+                        } else if (error instanceof ServerError) {
+                            Log.e(TAG, "ServerError: " + error.getMessage());
+                            Toast.makeText(activityCtx, "ServerError: " + error.getMessage(), Toast.LENGTH_LONG).show();
+                        } else if (error instanceof NetworkError) {
+                            Log.e(TAG, "NetworkError: " + error.getMessage());
+                            Toast.makeText(activityCtx, "NetworkError: " + error.getMessage(), Toast.LENGTH_LONG).show();
+                        } else if (error instanceof ParseError) {
+                            Log.e(TAG, "ParseError: " + error.getMessage());
+                            Toast.makeText(activityCtx, "ParseError: " + error.getMessage(), Toast.LENGTH_LONG).show();
+                        } else if (error.networkResponse.data != null) {
+                            try {
+                                JSONObject json = new JSONObject(new String(error.networkResponse.data));
+                                Log.e(TAG, json.getString("Message"));
+                                Toast.makeText(activityCtx, error.networkResponse.statusCode + ": " + json.getString("Message"), Toast.LENGTH_LONG).show();
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
                         callback.onError(error);
                     }
-                });
+
+                }) {
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("Authorization", "Bearer " + AppController.getPref().getString("access_token", ""));
+                params.put("Content-Type", "application/json");
+
+                return params;
+            }
+        };
 
 
 //        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
@@ -124,13 +169,13 @@ public class Api {
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
 
-                    @Override
-                    public void onResponse(String response) {
-                        progressDialog.dismiss();
-                        // remove double quotes around response
+            @Override
+            public void onResponse(String response) {
+                progressDialog.dismiss();
+                // remove double quotes around response
 //                        response = response.substring(1, response.length() - 1);
 //                        response = response.replace("\\\"", "\"");
-                        Log.i(TAG, response.toString());
+                Log.i(TAG, response.toString());
 
 //                        try {
 //                            JSONObject json = new JSONObject(response);
@@ -142,32 +187,46 @@ public class Api {
 //                            e.printStackTrace();
 //                        }
 
-                        callback.onSuccess(response);
+                callback.onSuccess(response);
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                progressDialog.dismiss();
+
+                if (error instanceof TimeoutError || error instanceof NoConnectionError) {
+                    Log.e(TAG, "TimeoutError: " + error.getNetworkTimeMs() + " ms");
+                    Toast.makeText(activityCtx, "TimeoutError: " + error.getNetworkTimeMs() + " ms", Toast.LENGTH_LONG).show();
+                } else if (error instanceof ServerError) {
+                    try {
+                        JSONObject json = new JSONObject(new String(error.networkResponse.data));
+                        Log.e(TAG, json.getString("error_description"));
+                        Toast.makeText(activityCtx, json.getString("error_description"), Toast.LENGTH_LONG).show();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "ServerError: " + error.getMessage());
+                        Toast.makeText(activityCtx, "ServerError: " + error.getMessage(), Toast.LENGTH_LONG).show();
                     }
-                }, new Response.ErrorListener() {
-
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        progressDialog.dismiss();
-
-                        if (error instanceof TimeoutError || error instanceof NoConnectionError) {
-                            Log.e(TAG, "TimeoutError: " + error.getNetworkTimeMs() + " ms");
-                            Toast.makeText(mCtx, "TimeoutError: " + error.getNetworkTimeMs() + " ms", Toast.LENGTH_LONG).show();
-                        } else if (error instanceof AuthFailureError) {
-                            Log.e(TAG, "AuthFailureError: " + error.getMessage());
-                            Toast.makeText(mCtx, "AuthFailureError: " + error.getMessage(), Toast.LENGTH_LONG).show();
-                        } else if (error instanceof ServerError) {
-                            //TODO
-                        } else if (error instanceof NetworkError) {
-                            Log.e(TAG, "NetworkError: " + error.getMessage());
-                            Toast.makeText(mCtx, "NetworkError: " + error.getMessage(), Toast.LENGTH_LONG).show();
-                        } else if (error instanceof ParseError) {
-                            //TODO
-                        }
-
-                        callback.onError(error);
+                } else if (error instanceof NetworkError) {
+                    Log.e(TAG, "NetworkError: " + error.getMessage());
+                    Toast.makeText(activityCtx, "NetworkError: " + error.getMessage(), Toast.LENGTH_LONG).show();
+                } else if (error instanceof ParseError) {
+                    Log.e(TAG, "ParseError: " + error.getMessage());
+                    Toast.makeText(activityCtx, "ParseError: " + error.getMessage(), Toast.LENGTH_LONG).show();
+                } else if (error.networkResponse != null && error.networkResponse.data != null) {
+                    try {
+                        JSONObject json = new JSONObject(new String(error.networkResponse.data));
+                        Log.e(TAG, json.getString("Message"));
+                        Toast.makeText(activityCtx, error.networkResponse.statusCode + ": " + json.getString("Message"), Toast.LENGTH_LONG).show();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-        }){
+                }
+
+                callback.onError(error);
+            }
+        }) {
             @Override
             public String getBodyContentType() {
                 return "application/x-www-form-urlencoded; charset=UTF-8";
@@ -217,9 +276,9 @@ public class Api {
     }
 
     public void getToken(String username, String password, VolleyCallback callback) {
-        String url = BuildConfig.API_URL + "api/token";
+        String url = protocol + "://" + host + "/api/token";
 
-        Map<String,String> params = new HashMap<String, String>();
+        Map<String, String> params = new HashMap<String, String>();
         params.put("grant_type", "password");
         params.put("username", username);
         params.put("password", password);
@@ -228,22 +287,22 @@ public class Api {
     }
 
     public void isValid(String username, String password, VolleyCallback callback) {
-        String url = BuildConfig.API_URL + "api/account/isValid";
+        String url = protocol + "://" + host + "/api/account/isValid";
 
-        Map<String,String> params = new HashMap<String, String>();
+        Map<String, String> params = new HashMap<String, String>();
         params.put("username", username);
         params.put("password", password);
 
-        stringPostReq(url, mapToString(params) , callback);
+        stringPostReq(url, mapToString(params), callback);
     }
 
     public void getCulture(VolleyCallback callback) {
-        String url = BuildConfig.API_URL + "api/pscripts/runscript/getCulture";
+        String url = protocol + "://" + host + "/api/pscripts/runscript/getCulture";
         stringReq(url, callback);
     }
 
     public void getUser(String name, VolleyCallback callback) {
-        String url = BuildConfig.API_URL + "api/pscripts/runscript/getUser?User=" + name;
+        String url = protocol + "://" + host + "/api/pscripts/runscript/getUser?User=" + name;
         stringReq(url, callback);
     }
 
