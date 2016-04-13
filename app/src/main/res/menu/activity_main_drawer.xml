@@ -16,9 +16,8 @@
                     android:id="@+id/nav_user_get"
                     android:title="@string/get_user" />
                 <item
-                    android:id="@+id/nav_camera"
-                    android:icon="@drawable/ic_menu_camera"
-                    android:title="Import" />
+                    android:id="@+id/nav_user_create"
+                    android:title="@string/nav_user_create" />
                 <item
                     android:id="@+id/nav_gallery"
                     android:icon="@drawable/ic_menu_gallery"

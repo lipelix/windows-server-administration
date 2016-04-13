@@ -1,13 +1,19 @@
 package cz.lip.windowsserveradministration.fragment;
 
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,23 +43,24 @@ public class UserFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         final View view = inflater.inflate(R.layout.fragment_user, container, false);
+        final TextView output = (TextView) view.findViewById(R.id.tw_user_output);
+        final EditText userName = (EditText) view.findViewById(R.id.tw_user_name);
 
-        Button button = (Button) view.findViewById(R.id.btn_user_run);
+        final Button button = (Button) view.findViewById(R.id.btn_user_run);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final TextView output = (TextView) view.findViewById(R.id.tw_user_output);
-                final EditText userName = (EditText) view.findViewById(R.id.btn_user_name);
 
                 if (userName.getText().toString().trim().length() < 1) {
                     userName.setError(getResources().getString(R.string.error_empty_input));
                     return;
                 }
 
+                AppController.hideKeyboardFrom(getActivity());
+
                 api.getUser(String.valueOf(userName.getText()), new VolleyCallback() {
                     @Override
                     public void onSuccess(String response) {
-                        Toast.makeText(AppController.getAppContext(), response, Toast.LENGTH_LONG).show();
                         Gson gson = new Gson();
                         UserResponse resp = gson.fromJson(response, UserResponse.class);
                         output.setText(resp.toString());

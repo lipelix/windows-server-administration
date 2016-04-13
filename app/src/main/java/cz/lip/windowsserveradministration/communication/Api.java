@@ -17,6 +17,7 @@ import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
 import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
@@ -118,30 +119,7 @@ public class Api {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         progressDialog.dismiss();
-
-                        if (error instanceof TimeoutError || error instanceof NoConnectionError) {
-                            Log.e(TAG, "TimeoutError: " + error.getNetworkTimeMs() + " ms");
-                            Toast.makeText(activityCtx, "TimeoutError: " + error.getNetworkTimeMs() + " ms", Toast.LENGTH_LONG).show();
-                        } else if (error instanceof ServerError) {
-                            Log.e(TAG, "ServerError: " + error.getMessage());
-                            Toast.makeText(activityCtx, "ServerError: " + error.getMessage(), Toast.LENGTH_LONG).show();
-                        } else if (error instanceof NetworkError) {
-                            Log.e(TAG, "NetworkError: " + error.getMessage());
-                            Toast.makeText(activityCtx, "NetworkError: " + error.getMessage(), Toast.LENGTH_LONG).show();
-                        } else if (error instanceof ParseError) {
-                            Log.e(TAG, "ParseError: " + error.getMessage());
-                            Toast.makeText(activityCtx, "ParseError: " + error.getMessage(), Toast.LENGTH_LONG).show();
-                        } else if (error.networkResponse.data != null) {
-                            try {
-                                JSONObject json = new JSONObject(new String(error.networkResponse.data));
-                                Log.e(TAG, json.getString("Message"));
-                                Toast.makeText(activityCtx, error.networkResponse.statusCode + ": " + json.getString("Message"), Toast.LENGTH_LONG).show();
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        }
-
-                        callback.onError(error);
+                        handleErrorResponse(error);
                     }
 
                 }) {
@@ -173,19 +151,23 @@ public class Api {
             public void onResponse(String response) {
                 progressDialog.dismiss();
                 // remove double quotes around response
-//                        response = response.substring(1, response.length() - 1);
-//                        response = response.replace("\\\"", "\"");
+                    if (response.charAt(response.length() - 1) == '"' && response.charAt(0) == '"') {
+                        response = response.substring(1, response.length() - 1);
+                        response = response.replace("\\\"", "\"");
+                    }
+
                 Log.i(TAG, response.toString());
 
-//                        try {
-//                            JSONObject json = new JSONObject(response);
-//                            if(!json.isNull("error")) {
-//                                callback.onScriptError(json.getString("error"));
-//                                return;
-//                            }
-//                        } catch (JSONException e) {
-//                            e.printStackTrace();
-//                        }
+                try {
+                    JSONObject json = new JSONObject(response);
+                    if (!json.isNull("error")) {
+                        Toast.makeText(activityCtx, json.getString("error"), Toast.LENGTH_LONG).show();
+                        callback.onScriptError(json.getString("error"));
+                        return;
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
 
                 callback.onSuccess(response);
             }
@@ -194,36 +176,7 @@ public class Api {
             @Override
             public void onErrorResponse(VolleyError error) {
                 progressDialog.dismiss();
-
-                if (error instanceof TimeoutError || error instanceof NoConnectionError) {
-                    Log.e(TAG, "TimeoutError: " + error.getNetworkTimeMs() + " ms");
-                    Toast.makeText(activityCtx, "TimeoutError: " + error.getNetworkTimeMs() + " ms", Toast.LENGTH_LONG).show();
-                } else if (error instanceof ServerError) {
-                    try {
-                        JSONObject json = new JSONObject(new String(error.networkResponse.data));
-                        Log.e(TAG, json.getString("error_description"));
-                        Toast.makeText(activityCtx, json.getString("error_description"), Toast.LENGTH_LONG).show();
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        Log.e(TAG, "ServerError: " + error.getMessage());
-                        Toast.makeText(activityCtx, "ServerError: " + error.getMessage(), Toast.LENGTH_LONG).show();
-                    }
-                } else if (error instanceof NetworkError) {
-                    Log.e(TAG, "NetworkError: " + error.getMessage());
-                    Toast.makeText(activityCtx, "NetworkError: " + error.getMessage(), Toast.LENGTH_LONG).show();
-                } else if (error instanceof ParseError) {
-                    Log.e(TAG, "ParseError: " + error.getMessage());
-                    Toast.makeText(activityCtx, "ParseError: " + error.getMessage(), Toast.LENGTH_LONG).show();
-                } else if (error.networkResponse != null && error.networkResponse.data != null) {
-                    try {
-                        JSONObject json = new JSONObject(new String(error.networkResponse.data));
-                        Log.e(TAG, json.getString("Message"));
-                        Toast.makeText(activityCtx, error.networkResponse.statusCode + ": " + json.getString("Message"), Toast.LENGTH_LONG).show();
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-
+                handleErrorResponse(error);
                 callback.onError(error);
             }
         }) {
@@ -231,23 +184,61 @@ public class Api {
             public String getBodyContentType() {
                 return "application/x-www-form-urlencoded; charset=UTF-8";
             }
-//
-//            @Override
-//            public Map<String, String> getHeaders() throws AuthFailureError {
-//                Map<String,String> params = new HashMap<String, String>();
-//                params.put("Content-Type","application/x-www-form-urlencoded");
-//                return params;
-//            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> header = new HashMap<String, String>();
+                header.put("Authorization", "Bearer " + AppController.getPref().getString("access_token", ""));
+//                params.put("Content-Type", "application/json");
+
+                return header;
+            }
 
             @Override
             public byte[] getBody() throws AuthFailureError {
-//                String httpPostBody="grant_type=password&username=admin&password=123456";
                 String httpPostBody = params;
                 return httpPostBody.getBytes();
             }
         };
 
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                30000,
+                0,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
         volley.getRequestQueue().add(stringRequest);
+    }
+
+
+    private void handleErrorResponse(VolleyError error) {
+        if (error instanceof TimeoutError || error instanceof NoConnectionError) {
+            Log.e(TAG, "TimeoutError: " + error.getNetworkTimeMs() + " ms");
+            Toast.makeText(activityCtx, "TimeoutError", Toast.LENGTH_LONG).show();
+        } else if (error instanceof ServerError) {
+            try {
+                JSONObject json = new JSONObject(new String(error.networkResponse.data));
+                Log.e(TAG, json.getString("error_description"));
+                Toast.makeText(activityCtx, json.getString("error_description"), Toast.LENGTH_LONG).show();
+            } catch (JSONException e) {
+                e.printStackTrace();
+                Log.e(TAG, "ServerError: " + error.getMessage());
+                Toast.makeText(activityCtx, "ServerError" , Toast.LENGTH_LONG).show();
+            }
+        } else if (error instanceof NetworkError) {
+            Log.e(TAG, "NetworkError: " + error.getMessage());
+            Toast.makeText(activityCtx, "NetworkError: " + error.getMessage(), Toast.LENGTH_LONG).show();
+        } else if (error instanceof ParseError) {
+            Log.e(TAG, "ParseError: " + error.getMessage());
+            Toast.makeText(activityCtx, "ParseError: " + error.getMessage(), Toast.LENGTH_LONG).show();
+        } else if (error.networkResponse != null && error.networkResponse.data != null) {
+            try {
+                JSONObject json = new JSONObject(new String(error.networkResponse.data));
+                Log.e(TAG, json.getString("Message"));
+                Toast.makeText(activityCtx, error.networkResponse.statusCode + ": " + json.getString("Message"), Toast.LENGTH_LONG).show();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private String mapToString(Map<String, String> map) {
@@ -304,6 +295,17 @@ public class Api {
     public void getUser(String name, VolleyCallback callback) {
         String url = protocol + "://" + host + "/api/pscripts/runscript/getUser?User=" + name;
         stringReq(url, callback);
+    }
+
+    public void createUser(String name, String login, String password, VolleyCallback callback) {
+        String url = protocol + "://" + host + "/api/pscripts/runscriptpost/createUser";
+
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("Name", name);
+        params.put("Login", login);
+        params.put("Password", password);
+
+        stringPostReq(url, mapToString(params), callback);
     }
 
 }

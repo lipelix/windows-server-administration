@@ -1,8 +1,11 @@
 package cz.lip.windowsserveradministration;
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 
 import java.util.Date;
 
@@ -27,6 +30,14 @@ public class AppController extends Application {
 
     public static Context getAppContext() {
         return instance.getApplicationContext();
+    }
+
+    public static void hideKeyboardFrom(Activity activity) {
+        if (activity == null)
+            return;
+        InputMethodManager inputMethodManager = (InputMethodManager)
+                activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
     }
 
     public static void save(String key, String value) {

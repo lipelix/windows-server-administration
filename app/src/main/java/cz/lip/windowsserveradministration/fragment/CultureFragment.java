@@ -48,7 +48,6 @@ public class CultureFragment extends Fragment {
                 api.getCulture(new VolleyCallback() {
                     @Override
                     public void onSuccess(String response) {
-                        Toast.makeText(AppController.getAppContext(), response, Toast.LENGTH_LONG).show();
                         Gson gson = new Gson();
                         CultureResponse resp = gson.fromJson(response, CultureResponse.class);
                         tw.setText(resp.toString());

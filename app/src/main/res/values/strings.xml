@@ -14,7 +14,7 @@
     <string name="heading_get_culture">getCulture</string>
     <string name="btn_run">Run</string>
     <string name="tw_desc_default">Here could be some intro bullshit.</string>
-    <string name="get_user">getUser</string>
+    <string name="get_user">getADUser</string>
     <string name="error_empty_input">Input can\'t be empty!</string>
     <item name="btn_run" type="id">Run</item>
     <string name="title_activity_login">MooWin - Sign in</string>
@@ -41,4 +41,9 @@
     <string name="action_exit">Exit</string>
     <string name="host">Host</string>
     <string name="error_invalid_host">Invalid form of host address</string>
+    <string name="prompt_username">Username</string>
+    <string name="nav_user_create">createADUser</string>
+    <string name="prompt_name">Name</string>
+    <string name="prompt_login">Login</string>
+    <string name="error_invalid_alphanumeric">Allowed only alphanumeric characters (a-z A-Z 0-9)</string>
 </resources>

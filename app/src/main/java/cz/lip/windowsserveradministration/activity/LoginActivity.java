@@ -187,12 +187,16 @@ public class LoginActivity extends AppCompatActivity {
         actvLogin.setThreshold(1);
         actvLogin.setAdapter(loginAdapter);
 
+        actvLogin.setText(AppController.getPref().getString("login", ""));
+
         ArrayList<String> hosts = new ArrayList<String>();
         hosts.add(AppController.getPref().getString("host", ""));
         ArrayAdapter<String> hostAdapter = new ArrayAdapter<String>(this, android.R.layout.select_dialog_item, hosts);
         AutoCompleteTextView actvHost = (AutoCompleteTextView)findViewById(R.id.host_input);
         actvHost.setThreshold(1);
         actvHost.setAdapter(hostAdapter);
+
+        actvHost.setText(AppController.getPref().getString("host", ""));
     }
 
     private boolean isLoginValid(String login) {
