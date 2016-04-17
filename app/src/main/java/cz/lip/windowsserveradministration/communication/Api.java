@@ -25,11 +25,13 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
@@ -104,7 +106,6 @@ public class Api {
                         try {
                             JSONObject json = new JSONObject(response);
                             if (!json.isNull("error")) {
-                                callback.onScriptError(json.getString("error"));
                                 return;
                             }
                         } catch (JSONException e) {
@@ -118,7 +119,6 @@ public class Api {
 
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        progressDialog.dismiss();
                         handleErrorResponse(error);
                     }
 
@@ -162,7 +162,6 @@ public class Api {
                     JSONObject json = new JSONObject(response);
                     if (!json.isNull("error")) {
                         Toast.makeText(activityCtx, json.getString("error"), Toast.LENGTH_LONG).show();
-                        callback.onScriptError(json.getString("error"));
                         return;
                     }
                 } catch (JSONException e) {
@@ -175,9 +174,7 @@ public class Api {
 
             @Override
             public void onErrorResponse(VolleyError error) {
-                progressDialog.dismiss();
                 handleErrorResponse(error);
-                callback.onError(error);
             }
         }) {
             @Override
@@ -206,14 +203,20 @@ public class Api {
                 0,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
+        Log.i(TAG, url);
+        Log.i(TAG, params);
         volley.getRequestQueue().add(stringRequest);
     }
 
-
     private void handleErrorResponse(VolleyError error) {
-        if (error instanceof TimeoutError || error instanceof NoConnectionError) {
+        progressDialog.dismiss();
+
+        if (error instanceof TimeoutError) {
             Log.e(TAG, "TimeoutError: " + error.getNetworkTimeMs() + " ms");
-            Toast.makeText(activityCtx, "TimeoutError", Toast.LENGTH_LONG).show();
+            Toast.makeText(activityCtx, "TimeoutError: " + error.getNetworkTimeMs() + " ms", Toast.LENGTH_LONG).show();
+        } else if (error instanceof NoConnectionError) {
+            Log.e(TAG, "NoConnectionError: " + error.getMessage());
+            Toast.makeText(activityCtx, "NoConnectionError: " + error.getMessage(), Toast.LENGTH_LONG).show();
         } else if (error instanceof ServerError) {
             try {
                 JSONObject json = new JSONObject(new String(error.networkResponse.data));
@@ -222,7 +225,7 @@ public class Api {
             } catch (JSONException e) {
                 e.printStackTrace();
                 Log.e(TAG, "ServerError: " + error.getMessage());
-                Toast.makeText(activityCtx, "ServerError" , Toast.LENGTH_LONG).show();
+                Toast.makeText(activityCtx, "ServerError " + error.networkResponse.statusCode , Toast.LENGTH_LONG).show();
             }
         } else if (error instanceof NetworkError) {
             Log.e(TAG, "NetworkError: " + error.getMessage());
@@ -239,6 +242,59 @@ public class Api {
                 e.printStackTrace();
             }
         }
+    }
+
+    public void getCert(final VolleyCallback callback) {
+        progressDialog.show();
+
+        String url= "http://" + host + "/api/account/getcert";
+
+        InputStreamVolleyRequest request = new InputStreamVolleyRequest(Request.Method.GET, url,
+                new Response.Listener<byte[]>() {
+                    @Override
+                    public void onResponse(byte[] response) {
+                        try {
+                            if (response != null) {
+                                FileOutputStream outputStream;
+
+                                try {
+                                    outputStream = AppController.getAppContext().openFileOutput(AppController.CERT_FILE_NAME, Context.MODE_PRIVATE);
+                                    outputStream.write(response);
+                                    outputStream.close();
+//                                    Toast.makeText(AppController.getAppContext(), "Download certificate complete", Toast.LENGTH_LONG).show();
+                                    Log.e(TAG, "Download certificate complete");
+
+                                    callback.onSuccess("ok");
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                    Log.e(TAG, "Error during saving certificate");
+                                    Toast.makeText(AppController.getAppContext(), "Error during saving certificate", Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        } catch (Exception e) {
+                            Toast.makeText(AppController.getAppContext(), "Unable to download certificate", Toast.LENGTH_LONG).show();
+                            Log.e(TAG, "Unable to download certificate");
+                            e.printStackTrace();
+                        }
+
+                        progressDialog.show();
+                    }
+                } ,new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+                handleErrorResponse(error);
+            }
+        }, null);
+
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                15000,
+                0,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+        RequestQueue mRequestQueue = Volley.newRequestQueue(AppController.getAppContext(), new HurlStack());
+        mRequestQueue.add(request);
     }
 
     private String mapToString(Map<String, String> map) {
@@ -262,7 +318,7 @@ public class Api {
     }
 
     public void ping(VolleyCallback callback) {
-        String url = BuildConfig.API_URL + "api/account/ping";
+        String url = "https://" + host + "api/account/ping";
         stringReq(url, callback);
     }
 
@@ -294,6 +350,11 @@ public class Api {
 
     public void getUser(String name, VolleyCallback callback) {
         String url = protocol + "://" + host + "/api/pscripts/runscript/getUser?User=" + name;
+        stringReq(url, callback);
+    }
+
+    public void showDiskSpace(VolleyCallback callback) {
+        String url = protocol + "://" + host + "/api/pscripts/runscript/showDiskSpace";
         stringReq(url, callback);
     }
 

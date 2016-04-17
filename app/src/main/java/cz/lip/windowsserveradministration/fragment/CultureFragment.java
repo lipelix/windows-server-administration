@@ -28,7 +28,7 @@ import cz.lip.windowsserveradministration.communication.response.CultureResponse
  */
 public class CultureFragment extends Fragment {
 
-    protected Api api;
+    private Api api;
 
     public CultureFragment() {
         api = Api.getInstance(getActivity());
@@ -51,16 +51,6 @@ public class CultureFragment extends Fragment {
                         Gson gson = new Gson();
                         CultureResponse resp = gson.fromJson(response, CultureResponse.class);
                         tw.setText(resp.toString());
-                    }
-
-                    @Override
-                    public void onError(VolleyError error) {
-                        Toast.makeText(AppController.getAppContext(), error.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-                    }
-
-                    @Override
-                    public void onScriptError(String error) {
-                        Toast.makeText(AppController.getAppContext(), error, Toast.LENGTH_LONG).show();
                     }
                 });
             }

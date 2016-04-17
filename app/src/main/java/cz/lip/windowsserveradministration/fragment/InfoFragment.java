@@ -101,15 +101,6 @@ public class InfoFragment extends Fragment {
                                 }
                             }
 
-                            @Override
-                            public void onError(VolleyError error) {
-
-                            }
-
-                            @Override
-                            public void onScriptError(String error) {
-
-                            }
                         });
 
                         dialog.dismiss();

@@ -33,6 +33,7 @@ import cz.lip.windowsserveradministration.R;
 import cz.lip.windowsserveradministration.communication.Api;
 import cz.lip.windowsserveradministration.fragment.CultureFragment;
 import cz.lip.windowsserveradministration.fragment.DefaultFragment;
+import cz.lip.windowsserveradministration.fragment.DiskFragment;
 import cz.lip.windowsserveradministration.fragment.InfoFragment;
 import cz.lip.windowsserveradministration.fragment.UserCreateFragment;
 import cz.lip.windowsserveradministration.fragment.UserFragment;
@@ -151,12 +152,10 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_gallery) {
+        if (id == R.id.nav_slideshow) {
 
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
+        } else if (id == R.id.nav_disk) {
+            changeFragment(R.id.fragment_container, new DiskFragment());
         } else if (id == R.id.nav_user_create) {
             changeFragment(R.id.fragment_container, new UserCreateFragment());
         } else if (id == R.id.nav_info) {

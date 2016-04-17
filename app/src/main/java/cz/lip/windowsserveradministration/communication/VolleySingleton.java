@@ -3,24 +3,35 @@ package cz.lip.windowsserveradministration.communication;
 import android.graphics.Bitmap;
 import android.util.Log;
 import android.util.LruCache;
+import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
 
+import org.apache.http.conn.ssl.AllowAllHostnameVerifier;
+import org.apache.http.conn.ssl.BrowserCompatHostnameVerifier;
+import org.apache.http.conn.ssl.StrictHostnameVerifier;
+
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.KeyStore;
 import java.security.Principal;
+import java.security.SecureRandom;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.List;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
@@ -36,10 +47,13 @@ import cz.lip.windowsserveradministration.R;
 
 public class VolleySingleton {
 
+    private static String TAG = "Volley";
     private static VolleySingleton instance = null;
     private ImageLoader imageLoader;
     private RequestQueue requestQueue;
-    private static char[] KEYSTORE_PASSWORD = "123456".toCharArray();
+    private Collection<List<?>> trustedCAN;
+
+    private static char[] KEYSTORE_PASSWORD = "123".toCharArray();
 
     private VolleySingleton() {
         imageLoader = new ImageLoader(requestQueue, new ImageLoader.ImageCache() {
@@ -73,9 +87,20 @@ public class VolleySingleton {
         return new HostnameVerifier() {
             @Override
             public boolean verify(String hostname, SSLSession session) {
-                return true;
-//                HostnameVerifier hv = HttpsURLConnection.getDefaultHostnameVerifier();
-//                return hv.verify("192.168.0.100", session);
+                String peer = session.getPeerHost();
+                Iterator<List<?>> it = trustedCAN.iterator();
+
+                while (it.hasNext()) {
+                    List<?> item = it.next();
+                    String name = item.get(item.size() - 1).toString();
+                    if (name.equals(peer)) {
+                        Log.i(TAG, "SSL | SAN matches: " + item.get(item.size() - 1));
+                        return true;
+                    }
+                }
+
+                Log.e(TAG, "SSL | Peer refused: " + peer);
+                return false;
             }
         };
     }
@@ -113,14 +138,16 @@ public class VolleySingleton {
                     public void checkClientTrusted(X509Certificate[] certs, String authType) {
                         try {
                             originalTrustManager.checkClientTrusted(certs, authType);
-                        } catch (CertificateException ignored) {
+                        } catch (CertificateException e) {
+                            e.printStackTrace();
                         }
                     }
 
                     public void checkServerTrusted(X509Certificate[] certs, String authType) {
                         try {
                             originalTrustManager.checkServerTrusted(certs, authType);
-                        } catch (CertificateException ignored) {
+                        } catch (CertificateException e) {
+                            e.printStackTrace();
                         }
                     }
                 }
@@ -129,13 +156,15 @@ public class VolleySingleton {
 
     public SSLSocketFactory newSslSocketFactory() {
         try {
-            InputStream caInput = AppController.getAppContext().getResources().openRawResource(R.raw.localcert); // this cert file stored in \app\src\main\res\raw folder path
+//            InputStream caInput = AppController.getAppContext().getResources().openRawResource(R.raw.localcert); // this cert file stored in \app\src\main\res\raw folder path
+            InputStream caInput = AppController.getAppContext().openFileInput(AppController.CERT_FILE_NAME); 
             KeyStore keyStore = KeyStore.getInstance("PKCS12");
             keyStore.load(caInput, KEYSTORE_PASSWORD);
             X509Certificate ca = (X509Certificate) keyStore.getCertificate(keyStore.aliases().nextElement());
-            Log.d("SSL", "DN - " + ca.getSubjectDN() + " PubK - " + ca.getPublicKey());
             keyStore.setCertificateEntry("ca", ca);
 
+            trustedCAN = ca.getSubjectAlternativeNames();
+            Log.i(TAG, "SSL | DN: " + ca.getSubjectDN() + " SAN: " + trustedCAN.toString());
 
             String tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
             TrustManagerFactory tmf = TrustManagerFactory.getInstance(tmfAlgorithm);
@@ -144,12 +173,19 @@ public class VolleySingleton {
             TrustManager[] wrappedTrustManagers = getWrappedTrustManagers(tmf.getTrustManagers());
 
             SSLContext sslContext = SSLContext.getInstance("TLS");
-            sslContext.init(null, wrappedTrustManagers, null);
+            sslContext.init(null, wrappedTrustManagers, new SecureRandom());
 
             return sslContext.getSocketFactory();
+        } catch (FileNotFoundException e) {
+            Log.e(TAG, "SSL | Error during certificate file opening");
+            e.printStackTrace();
         } catch (Exception e) {
-            throw new AssertionError(e);
+            e.printStackTrace();
+            Log.e(TAG, e.getMessage());
         }
+
+        Toast.makeText(AppController.getAppContext(), "SSL error during certificate file opening", Toast.LENGTH_LONG).show();
+        return null;
     }
 
     public ImageLoader getImageLoader(){

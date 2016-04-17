@@ -65,16 +65,6 @@ public class UserFragment extends Fragment {
                         UserResponse resp = gson.fromJson(response, UserResponse.class);
                         output.setText(resp.toString());
                     }
-
-                    @Override
-                    public void onError(VolleyError error) {
-                        Toast.makeText(AppController.getAppContext(), error.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-                    }
-
-                    @Override
-                    public void onScriptError(String error) {
-                        Toast.makeText(AppController.getAppContext(), error, Toast.LENGTH_LONG).show();
-                    }
                 });
             }
         });

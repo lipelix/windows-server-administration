@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
+import java.io.File;
 import java.util.Date;
 
 
@@ -14,6 +15,7 @@ public class AppController extends Application {
 
     private static AppController instance;
     public static final String PREF_NAME = "cz.lip.windowsserveradministration";
+    public static final String CERT_FILE_NAME = "certificate.pfx";
     public static SharedPreferences pref;
 
 
@@ -38,6 +40,13 @@ public class AppController extends Application {
         InputMethodManager inputMethodManager = (InputMethodManager)
                 activity.getSystemService(Context.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
+    }
+
+    public static boolean certExist() {
+        File file = new File(CERT_FILE_NAME);
+        if(file.exists())
+            return true;
+        return false;
     }
 
     public static void save(String key, String value) {

@@ -19,9 +19,8 @@
                     android:id="@+id/nav_user_create"
                     android:title="@string/nav_user_create" />
                 <item
-                    android:id="@+id/nav_gallery"
-                    android:icon="@drawable/ic_menu_gallery"
-                    android:title="Gallery" />
+                    android:id="@+id/nav_disk"
+                    android:title="@string/show_disk_space" />
                 <item
                     android:id="@+id/nav_slideshow"
                     android:icon="@drawable/ic_menu_slideshow"

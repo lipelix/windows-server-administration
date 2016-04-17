@@ -7,7 +7,7 @@ import org.json.JSONObject;
 public interface VolleyCallback {
 
     void onSuccess(String response);
-    void onError(VolleyError error);
-    void onScriptError(String error);
+//    void onError(VolleyError error);
+//    void onScriptError(String error);
 
 }

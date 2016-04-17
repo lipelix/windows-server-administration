@@ -2,6 +2,7 @@ package cz.lip.windowsserveradministration.activity;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
@@ -21,11 +22,17 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.HurlStack;
+import com.android.volley.toolbox.Volley;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -34,6 +41,7 @@ import java.util.Set;
 import cz.lip.windowsserveradministration.AppController;
 import cz.lip.windowsserveradministration.R;
 import cz.lip.windowsserveradministration.communication.Api;
+import cz.lip.windowsserveradministration.communication.InputStreamVolleyRequest;
 import cz.lip.windowsserveradministration.communication.VolleyCallback;
 
 /**
@@ -94,7 +102,7 @@ public class LoginActivity extends AppCompatActivity {
 
         // Store values at the time of the login attempt.
         final String login = mLogingView.getText().toString();
-        String password = mPasswordView.getText().toString();
+        final String password = mPasswordView.getText().toString();
         final String host = mHostView.getText().toString().replaceAll("/*$", "");
 
         boolean cancel = false;
@@ -135,43 +143,41 @@ public class LoginActivity extends AppCompatActivity {
             // form field with an error.
             focusView.requestFocus();
         } else {
-            final Intent intent = new Intent(this, MainActivity.class);
             api.setHost(host);
+            AppController.save("host", host);
 
-            api.getToken(login, password, new VolleyCallback() {
+            api.getCert(new VolleyCallback() {
                 @Override
                 public void onSuccess(String response) {
-                    try {
-                        JSONObject json = new JSONObject(response);
-                        AppController.save("access_token", json.getString("access_token"));
-
-                        Date now = new Date(System.currentTimeMillis());
-                        AppController.saveLong("access_token_expires", now.getTime() + (json.getLong("expires_in") * 1000));
-
-                        AppController.save("login", login);
-                        AppController.save("host", host);
-                        api.setHost(host);
-
-                        startActivity(intent);
-                        finish();
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                @Override
-                public void onError(VolleyError error) {
-
-                }
-
-                @Override
-                public void onScriptError(String error) {
-
+                    callGetToken(login, password);
                 }
             });
 
         }
+    }
+
+    private void callGetToken(final String login, String password) {
+        final Intent intent = new Intent(this, MainActivity.class);
+        api.getToken(login, password, new VolleyCallback() {
+            @Override
+            public void onSuccess(String response) {
+                try {
+                    JSONObject json = new JSONObject(response);
+                    AppController.save("access_token", json.getString("access_token"));
+
+                    Date now = new Date(System.currentTimeMillis());
+                    AppController.saveLong("access_token_expires", now.getTime() + (json.getLong("expires_in") * 1000));
+
+                    AppController.save("login", login);
+
+                    startActivity(intent);
+                    finish();
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     @Override
@@ -184,19 +190,22 @@ public class LoginActivity extends AppCompatActivity {
         logins.add(AppController.getPref().getString("login", ""));
         ArrayAdapter<String> loginAdapter = new ArrayAdapter<String>(this, android.R.layout.select_dialog_item, logins);
         AutoCompleteTextView actvLogin = (AutoCompleteTextView)findViewById(R.id.login_input);
-        actvLogin.setThreshold(1);
-        actvLogin.setAdapter(loginAdapter);
+        if (actvLogin != null) {
+            actvLogin.setThreshold(1);
+            actvLogin.setAdapter(loginAdapter);
+            actvLogin.setText(AppController.getPref().getString("login", ""));
+        }
 
-        actvLogin.setText(AppController.getPref().getString("login", ""));
 
         ArrayList<String> hosts = new ArrayList<String>();
         hosts.add(AppController.getPref().getString("host", ""));
         ArrayAdapter<String> hostAdapter = new ArrayAdapter<String>(this, android.R.layout.select_dialog_item, hosts);
         AutoCompleteTextView actvHost = (AutoCompleteTextView)findViewById(R.id.host_input);
-        actvHost.setThreshold(1);
-        actvHost.setAdapter(hostAdapter);
-
-        actvHost.setText(AppController.getPref().getString("host", ""));
+        if (actvHost != null) {
+            actvHost.setThreshold(1);
+            actvHost.setAdapter(hostAdapter);
+            actvHost.setText(AppController.getPref().getString("host", ""));
+        }
     }
 
     private boolean isLoginValid(String login) {
