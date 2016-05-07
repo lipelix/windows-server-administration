@@ -1,28 +1,33 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragment.DefaultFragment"
-    android:background="#006aff">
+    android:orientation="horizontal"
+    tools:context="cz.mowin.fragment.DefaultFragment">
 
     <!-- TODO: Update blank fragment layout -->
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="@string/heading_default"
+        android:gravity="center"
         android:id="@+id/tw_heading"
-        android:layout_gravity="center_horizontal|top"
-        android:singleLine="true" />
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="@string/tw_desc_default"
         android:id="@+id/tw_desc_default"
-        android:layout_gravity="center" />
+        android:layout_gravity="center_vertical"
+        android:gravity="center"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
 
 
-</FrameLayout>
+</RelativeLayout>

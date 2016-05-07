@@ -1,0 +1,81 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="cz.mowin.fragment.ProcessesFragment"
+    android:weightSum="1">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_gravity="center_horizontal">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="80dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="80dp"
+                android:text="@string/processes"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:gravity="left|center_vertical"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentStart="true" />
+
+            <ImageButton
+                android:paddingTop="10dp"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:scaleType="fitCenter"
+                android:background="@null"
+                android:gravity="right"
+                android:id="@+id/btn_processes_help"
+                android:src="@drawable/help" />
+        </LinearLayout>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:text="@string/btn_run"
+            android:id="@+id/btn_processes_run"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true" />
+    </RelativeLayout>
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="40dp" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingRight="10dp"
+            android:ellipsize="marquee"
+            android:text="Name"
+            android:gravity="left"
+            android:layout_gravity="center_vertical"/>
+
+        <TextView
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:text="CPU [%]"
+            android:layout_marginRight="80dp"
+            android:layout_alignParentRight="true"
+            android:layout_gravity="center_vertical"/>
+
+        <TextView
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:text="RAM [MB]"
+            android:layout_alignParentRight="true"
+            android:layout_gravity="center_vertical"/>
+    </RelativeLayout>
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/lw_processes"
+        android:layout_gravity="center_horizontal" />
+
+
+</LinearLayout>

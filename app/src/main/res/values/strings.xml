@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">WindowsServerAdministration</string>
     <string name="get_culture">getCulture</string>
-    <string name="heading_default">Welcome in Remote Administration</string>
-    <string name="title_activity_main">MainActivity</string>
+    <string name="heading_default">Welcome in MoWin</string>
+    <string name="title_activity_main">MoWin</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -13,11 +13,11 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="heading_get_culture">getCulture</string>
     <string name="btn_run">Run</string>
-    <string name="tw_desc_default">Here could be some intro bullshit.</string>
+    <string name="tw_desc_default">MoWin let you administrate your Windows Server from wherever you are. Start by click on top left menu icon or slide this screen from left.</string>
     <string name="get_user">getADUser</string>
     <string name="error_empty_input">Input can\'t be empty!</string>
     <item name="btn_run" type="id">Run</item>
-    <string name="title_activity_login">MooWin - Sign in</string>
+    <string name="title_activity_login">MoWin - Sign in</string>
 
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
@@ -47,4 +47,17 @@
     <string name="prompt_login">Login</string>
     <string name="error_invalid_alphanumeric">Allowed only alphanumeric characters (a-z A-Z 0-9)</string>
     <string name="show_disk_space">showDiskSpace</string>
+    <string name="exit_confirm">Are you sure you want to exit?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="logout_confirm">Do you really want to logout?</string>
+    <string name="btn_info_run">Refresh token</string>
+    <string name="processes">Processes</string>
+    <string name="users">Users</string>
+    <string name="tooltip_users">This script will return list of Active Directory users and show if they are enabled or disabled.</string>
+    <string name="services">Services</string>
+    <string name="tooltip_services">This is overview of system services. You will get all available system services and see if it´s running or not. Green light indicate running service and red stopped one.</string>
+    <string name="tooltip_processes">Show running processes at host machine. For each process is shown name, percentage of processor load from time when process started, and current ram usage.</string>
+    <string name="inactive">Inactive</string>
+    <string name="tooltip_inactives">This script will return users and computers from Active Directory, which are inactive for at least 30 days.</string>
 </resources>

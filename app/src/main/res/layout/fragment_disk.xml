@@ -2,16 +2,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="cz.lip.windowsserveradministration.fragment.DiskFragment"
+    tools:context="cz.mowin.fragment.DiskFragment"
     android:orientation="vertical">
 
     <!-- TODO: Update blank fragment layout -->
+
 
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="80dp">
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="80dp">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="80dp"
@@ -19,6 +23,17 @@
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="showDiskSpace"
             android:id="@+id/textView6" />
+
+        <ImageButton
+            android:paddingTop="10dp"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:scaleType="fitCenter"
+            android:background="@null"
+            android:gravity="right"
+            android:id="@+id/btn_disk_help"
+            android:src="@drawable/help" />
+    </LinearLayout>
 
         <Button
             android:layout_width="wrap_content"
