@@ -273,7 +273,7 @@ public class Api {
         }, null);
 
         request.setRetryPolicy(new DefaultRetryPolicy(
-                15000,
+                30000,
                 0,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
@@ -305,11 +305,6 @@ public class Api {
         params.put("password", password);
 
         stringPostReq(url, Utils.mapToString(params), callback);
-    }
-
-    public void getCulture(VolleyCallback callback) {
-        String url = protocol + "://" + host + "/api/pscripts/runscript/getCulture";
-        stringReq(url, callback);
     }
 
     public void getUser(String name, VolleyCallback callback) {
@@ -362,6 +357,60 @@ public class Api {
         params.put("Name", name);
         params.put("Login", login);
         params.put("Password", password);
+
+        stringPostReq(url, Utils.mapToString(params), callback);
+    }
+
+    public void getService(String name, VolleyCallback callback) {
+        String url = protocol + "://" + host + "/api/pscripts/runscriptpost/getService";
+
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("Name", name);
+
+        stringPostReq(url, Utils.mapToString(params), callback);
+    }
+
+    public void startService(String name, VolleyCallback callback) {
+        String url = protocol + "://" + host + "/api/pscripts/runscriptpost/startService";
+
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("Name", name);
+
+        stringPostReq(url, Utils.mapToString(params), callback);
+    }
+
+    public void stopService(String name, VolleyCallback callback) {
+        String url = protocol + "://" + host + "/api/pscripts/runscriptpost/stopService";
+
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("Name", name);
+
+        stringPostReq(url, Utils.mapToString(params), callback);
+    }
+
+    public void restartService(String name, VolleyCallback callback) {
+        String url = protocol + "://" + host + "/api/pscripts/runscriptpost/restartService";
+
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("Name", name);
+
+        stringPostReq(url, Utils.mapToString(params), callback);
+    }
+
+    public void getProcess(int id, VolleyCallback callback) {
+        String url = protocol + "://" + host + "/api/pscripts/runscriptpost/getProcess";
+
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("Id", String.valueOf(id));
+
+        stringPostReq(url, Utils.mapToString(params), callback);
+    }
+
+    public void stopProcess(int id, VolleyCallback callback) {
+        String url = protocol + "://" + host + "/api/pscripts/runscriptpost/stopProcess";
+
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("Id", String.valueOf(id));
 
         stringPostReq(url, Utils.mapToString(params), callback);
     }

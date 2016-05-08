@@ -30,10 +30,12 @@ public class ProcessesAdapter extends ArrayAdapter<ProcessItem> {
         TextView twCpuPercent = (TextView) convertView.findViewById(R.id.tw_processes_item_cpu_percent);
         TextView twName = (TextView) convertView.findViewById(R.id.tw_processes_item_name);
         TextView twWs = (TextView) convertView.findViewById(R.id.tw_processes_item_ws);
+        TextView twId = (TextView) convertView.findViewById(R.id.tw_processes_item_id);
 
         twCpuPercent.setText(String.valueOf(process.cpuPercent));
         twWs.setText(String.valueOf(process.ws));
         twName.setText(process.name);
+        twId.setText(String.valueOf(process.id));
 
         return convertView;
     }

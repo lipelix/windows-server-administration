@@ -17,6 +17,20 @@ public class Utils {
         return string.matches("^[a-zA-Z0-9_ ]+$");
     }
 
+    public static boolean isAlphaNumericDotSpace(String string) {
+        return string.matches("^[a-zA-Z0-9_. ]+$");
+    }
+
+    public static boolean isAlphaNumericUnderscore(String string) {
+        return string.matches("^[a-zA-Z0-9_]+$");
+    }
+
+    public static boolean hasSpace(String string) {
+        if (string.length() < 1)
+            return true;
+        return string.contains(" ");
+    }
+
     public static String mapToString(Map<String, String> map) {
         StringBuilder stringBuilder = new StringBuilder();
 

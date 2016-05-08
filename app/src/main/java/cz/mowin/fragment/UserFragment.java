@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 
@@ -22,6 +23,7 @@ import cz.mowin.R;
 import cz.mowin.communication.Api;
 import cz.mowin.communication.VolleyCallback;
 import cz.mowin.communication.response.UserResponse;
+import cz.mowin.utils.Utils;
 import it.sephiroth.android.library.tooltip.Tooltip;
 
 /**
@@ -50,34 +52,40 @@ public class UserFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                if (userName.getText().toString().trim().length() < 1) {
-                    userName.setError(getResources().getString(R.string.error_empty_input));
+                if (!Utils.isAlphaNumericDotSpace(userName.getText().toString().trim())) {
+                    userName.setError(getResources().getString(R.string.error_user_input));
                     return;
                 }
 
                 AppController.hideKeyboardFrom(getActivity());
 
+                output.setText("");
+                outputGroups.setText("Member of: ");
                 api.getUser(String.valueOf(userName.getText()), new VolleyCallback() {
                     @Override
                     public void onSuccess(String response) {
                         Gson gson = new Gson();
-                        UserResponse resp = gson.fromJson(response, UserResponse.class);
-                        output.setText(resp.toString());
-
-                        api.getUserMembership(String.valueOf(userName.getText()), new VolleyCallback() {
-                            @Override
-                            public void onSuccess(String response) {
-                                outputGroups.setText("Member of: ");
-                                try {
-                                    JSONArray groups = new JSONArray(response);
-                                    for (int i = 0; i < groups.length(); i++) {
-                                        outputGroups.append("\n\t" + groups.getString(i));
+                        try {
+                            UserResponse resp = gson.fromJson(response, UserResponse.class);
+                            output.setText(resp.toString());
+                            api.getUserMembership(String.valueOf(userName.getText()), new VolleyCallback() {
+                                @Override
+                                public void onSuccess(String response) {
+                                    try {
+                                        JSONArray groups = new JSONArray(response);
+                                        for (int i = 0; i < groups.length(); i++) {
+                                            outputGroups.append("\n\t" + groups.getString(i));
+                                        }
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                        outputGroups.setText("No membership.");
                                     }
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
                                 }
-                            }
-                        });
+                            });
+                        } catch (com.google.gson.JsonSyntaxException e) {
+                            e.printStackTrace();
+                            Toast.makeText(AppController.getAppContext(), "Problem with response format.", Toast.LENGTH_LONG).show();
+                        }
                     }
                 });
             }

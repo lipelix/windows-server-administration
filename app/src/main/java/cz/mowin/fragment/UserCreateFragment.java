@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -17,6 +18,7 @@ import cz.mowin.communication.Api;
 import cz.mowin.communication.VolleyCallback;
 import cz.mowin.communication.response.UserCreateResponse;
 import cz.mowin.utils.Utils;
+import it.sephiroth.android.library.tooltip.Tooltip;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -46,13 +48,13 @@ public class UserCreateFragment extends Fragment {
                 final EditText pass = (EditText) view.findViewById(R.id.tw_user_password);
 
                 if (!Utils.isAlphaNumericSpace(name.getText().toString())) {
-                    name.setError(getString(R.string.error_invalid_alphanumeric));
+                    name.setError(getString(R.string.error_invalid_alphanumericspace));
                     return;
-                } else if (!Utils.isAlphaNumeric(login.getText().toString())) {
-                    login.setError(getString(R.string.error_invalid_alphanumeric));
+                } else if (!Utils.isAlphaNumericUnderscore(login.getText().toString())) {
+                    login.setError(getString(R.string.error_invalid_alphanumericunderscore));
                     return;
-                } else if (!Utils.isAlphaNumeric(pass.getText().toString())) {
-                    pass.setError(getString(R.string.error_invalid_alphanumeric));
+                } else if (Utils.hasSpace(pass.getText().toString().trim())) {
+                    pass.setError(getString(R.string.error_invalid_create_pass));
                     return;
                 }
 
@@ -71,10 +73,40 @@ public class UserCreateFragment extends Fragment {
                             }
 
                         });
+                    }
 
+                    public void onError(String response) {
+                        api.getUser(login.getText().toString(), new VolleyCallback() {
+                            @Override
+                            public void onSuccess(String response) {
+                                Gson gson = new Gson();
+                                UserCreateResponse resp = gson.fromJson(response, UserCreateResponse.class);
+                                output.setText(resp.toString());
+                            }
+
+                        });
                     }
 
                 });
+            }
+        });
+
+        ImageButton help = (ImageButton) view.findViewById(R.id.btn_user_create_help);
+        help.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Tooltip.make(getActivity(),
+                        new Tooltip.Builder()
+                                .anchor(view, Tooltip.Gravity.CENTER)
+                                .closePolicy(new Tooltip.ClosePolicy()
+                                        .insidePolicy(true, false)
+                                        .outsidePolicy(true, false), 0)
+                                .text(getResources().getString(R.string.tooltip_create_user))
+                                .maxWidth(500)
+                                .withOverlay(true)
+                                .fadeDuration(200)
+                                .build()
+                ).show();
             }
         });
 

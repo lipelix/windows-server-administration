@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 public class ProcessItem {
 
+    public int id;
     public double cpu;
     public double cpuPercent;
     public String name;
@@ -17,6 +18,7 @@ public class ProcessItem {
 
     public ProcessItem(JSONObject object){
         try {
+            this.id = object.getInt("Id");
             this.cpu = object.getDouble("CPU");
             this.cpuPercent = object.getDouble("CPUPercent");
             this.name = object.getString("Name");

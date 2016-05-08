@@ -53,7 +53,8 @@
             android:ellipsize="marquee"
             android:text="Name"
             android:gravity="left"
-            android:layout_gravity="center_vertical"/>
+            android:layout_gravity="center_vertical"
+            android:textStyle="bold" />
 
         <TextView
             android:layout_width="80dp"
@@ -61,14 +62,16 @@
             android:text="CPU [%]"
             android:layout_marginRight="80dp"
             android:layout_alignParentRight="true"
-            android:layout_gravity="center_vertical"/>
+            android:layout_gravity="center_vertical"
+            android:textStyle="bold" />
 
         <TextView
             android:layout_width="80dp"
             android:layout_height="wrap_content"
             android:text="RAM [MB]"
             android:layout_alignParentRight="true"
-            android:layout_gravity="center_vertical"/>
+            android:layout_gravity="center_vertical"
+            android:textStyle="bold" />
     </RelativeLayout>
 
     <ListView

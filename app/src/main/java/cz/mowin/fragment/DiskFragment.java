@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Legend;
@@ -25,6 +26,7 @@ import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
+import cz.mowin.AppController;
 import cz.mowin.R;
 import cz.mowin.communication.Api;
 import cz.mowin.communication.VolleyCallback;
@@ -57,12 +59,19 @@ public class DiskFragment extends Fragment {
                 api.showDiskSpace(new VolleyCallback() {
                     @Override
                     public void onSuccess(String response) {
-                        Gson gson = new Gson();
-                        DiskResponse[] disks = gson.fromJson(response, DiskResponse[].class);
-                        tw.setText("Available disk units: ");
                         LinearLayout rl = (LinearLayout) view.findViewById(R.id.ll_charts);
                         rl.removeAllViews();
+                        DiskResponse[] disks;
+                        Gson gson = new Gson();
 
+                        try {
+                            disks = gson.fromJson(response, DiskResponse[].class);
+                        } catch (com.google.gson.JsonSyntaxException e) {
+                            e.printStackTrace();
+                            disks = new DiskResponse[]{gson.fromJson(response, DiskResponse.class)};
+                        }
+
+                        tw.setText("Available disk units: ");
                         for (int i = 0; i < disks.length; i++) {
                             tw.append(disks[i].Name.toString() + " ");
                             PieChart chart = (PieChart) new PieChart(getActivity());
@@ -76,7 +85,6 @@ public class DiskFragment extends Fragment {
                 });
             }
         });
-
 
         ImageButton help = (ImageButton) view.findViewById(R.id.btn_disk_help);
         help.setOnClickListener(new View.OnClickListener() {
@@ -112,8 +120,8 @@ public class DiskFragment extends Fragment {
         yVals1.add(new Entry((float) used, 1));
 
         ArrayList<String> xVals = new ArrayList<String>();
-        xVals.add(0, "Free");
-        xVals.add(1, "Used");
+        xVals.add(0, "Free [GB]");
+        xVals.add(1, "Used [GB]");
 
         PieDataSet dataSet = new PieDataSet(yVals1, name + " disk space");
         dataSet.setSliceSpace(2f);

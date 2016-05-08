@@ -14,7 +14,7 @@
     <string name="heading_get_culture">getCulture</string>
     <string name="btn_run">Run</string>
     <string name="tw_desc_default">MoWin let you administrate your Windows Server from wherever you are. Start by click on top left menu icon or slide this screen from left.</string>
-    <string name="get_user">getADUser</string>
+    <string name="get_user">User</string>
     <string name="error_empty_input">Input can\'t be empty!</string>
     <item name="btn_run" type="id">Run</item>
     <string name="title_activity_login">MoWin - Sign in</string>
@@ -42,11 +42,13 @@
     <string name="host">Host</string>
     <string name="error_invalid_host">Invalid form of host address</string>
     <string name="prompt_username">Username</string>
-    <string name="nav_user_create">createADUser</string>
+    <string name="nav_user_create">Create User</string>
     <string name="prompt_name">Name</string>
     <string name="prompt_login">Login</string>
-    <string name="error_invalid_alphanumeric">Allowed only alphanumeric characters (a-z A-Z 0-9)</string>
-    <string name="show_disk_space">showDiskSpace</string>
+    <string name="error_invalid_alphanumeric">Allowed are only alphanumeric characters.</string>
+    <string name="error_invalid_alphanumericspace">Allowed are only alphanumeric characters with space and underscore.</string>
+    <string name="error_invalid_alphanumericunderscore">Allowed are only alphanumeric characters and underscore.</string>
+    <string name="show_disk_space">Drives</string>
     <string name="exit_confirm">Are you sure you want to exit?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
@@ -54,10 +56,23 @@
     <string name="btn_info_run">Refresh token</string>
     <string name="processes">Processes</string>
     <string name="users">Users</string>
-    <string name="tooltip_users">This script will return list of Active Directory users and show if they are enabled or disabled.</string>
+    <string name="tooltip_users">This script will return list of Active Directory users and show if they are enabled or disabled. Green icon is enabled user and gray disabled.</string>
     <string name="services">Services</string>
     <string name="tooltip_services">This is overview of system services. You will get all available system services and see if it´s running or not. Green light indicate running service and red stopped one.</string>
     <string name="tooltip_processes">Show running processes at host machine. For each process is shown name, percentage of processor load from time when process started, and current ram usage.</string>
     <string name="inactive">Inactive</string>
     <string name="tooltip_inactives">This script will return users and computers from Active Directory, which are inactive for at least 30 days.</string>
+    <string name="btn_start">Start</string>
+    <string name="btn_stop">Stop</string>
+    <string name="btn_restart">Restart</string>
+    <string name="tooltip_service">This is service maintenance part. It allows you to start, stop or restart service according to its actual state.</string>
+    <string name="Process">Process</string>
+    <string name="tooltip_process">This is process maintenance part. It allows you to stop the process.</string>
+    <string name="error_user_input">Allowed are only alphanumeric characters with dot, space and underscore. Input also can´t be empty.</string>
+    <string name="error_invalid_create_pass">Password can\'t have space character and can\'t be empty.</string>
+    <string name="tooltip_create_user">This part allows you to create Active Directory user. You can set Name of User, Login and Password. Created user will become enabled when passwords meets server password requirements, otherwise User will be also created, but will became disabled.</string>
+    <string name="stop_process_confirm">Are you sure you want to stop process?</string>
+    <string name="stop_service_confirm">Are you sure you want to stop service?</string>
+    <string name="restart_service_confirm">Are you sure you want to restart service?</string>
+    <string name="start_service_confirm">Are you sure you want to start service?</string>
 </resources>

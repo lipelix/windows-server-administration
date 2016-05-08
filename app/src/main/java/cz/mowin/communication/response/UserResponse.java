@@ -12,22 +12,21 @@ public class UserResponse {
     private String DisplayName;
     private String EmailAddress;
     private String Created;
-    private String LastLogonDate;
+    private String LastLogon;
     private String PasswordLastSet;
 
     @Override
     public String toString() {
-        return "GivenName: " + GivenName + '\n' +
-                "Surname: " + Surname + '\n' +
-                "Enabled: " + Enabled + '\n' +
-                "SamAccountName: " + SamAccountName + '\n' +
-                "DistinguishedName: " + DistinguishedName + '\n' +
+        return "SamAccountName: " + SamAccountName + '\n' +
                 "Name: " + Name + '\n' +
-                "AccountExpirationDate: " + AccountExpirationDate + '\n' +
+                "GivenName: " + GivenName + '\n' +
+                "Surname: " + Surname + '\n' +
                 "DisplayName: " + DisplayName + '\n' +
-                "EmailAddress: " + EmailAddress + '\n' +
+                "EmailAddress: " + EmailAddress + "\n\n" +
+                "Enabled: " + Enabled + '\n' +
+                "AccountExpiration: " + AccountExpirationDate + '\n' +
                 "Created: " + Created + '\n' +
-                "LastLogonDate: " + LastLogonDate + '\n' +
+                "LastLogon: " + LastLogon + '\n' +
                 "PasswordLastSet: " + PasswordLastSet + '\n';
 
     }

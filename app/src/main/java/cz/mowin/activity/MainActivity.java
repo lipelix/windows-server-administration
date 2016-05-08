@@ -19,16 +19,18 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import cz.mowin.AppController;
 import cz.mowin.R;
 import cz.mowin.communication.Api;
-import cz.mowin.fragment.CultureFragment;
 import cz.mowin.fragment.DefaultFragment;
 import cz.mowin.fragment.DiskFragment;
 import cz.mowin.fragment.InactiveFragment;
 import cz.mowin.fragment.InfoFragment;
+import cz.mowin.fragment.ProcessFragment;
 import cz.mowin.fragment.ProcessesFragment;
+import cz.mowin.fragment.ServiceFragment;
 import cz.mowin.fragment.ServicesFragment;
 import cz.mowin.fragment.UserCreateFragment;
 import cz.mowin.fragment.UserFragment;
@@ -75,13 +77,34 @@ public class MainActivity extends AppCompatActivity
 
         api = Api.getInstance(this);
 
-        changeFragment(R.id.fragment_container, new DefaultFragment());
+        changeFragment(new DefaultFragment());
     }
 
-    protected void changeFragment(int id, Fragment fragment) {
+    protected void changeFragment(Fragment fragment) {
         FragmentTransaction ft = getFragmentManager().beginTransaction();
-        ft.replace(id, fragment);
+        ft.replace(R.id.fragment_container, fragment);
         ft.commit();
+    }
+
+    protected void changeFragment(Fragment fragment, Bundle bundle) {
+        fragment.setArguments(bundle);
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ft.replace(R.id.fragment_container, fragment);
+        ft.commit();
+    }
+
+    public void onClickItemServices(View v) {
+        final TextView tw = (TextView) v.findViewById(R.id.tw_services_item_name);
+        Bundle bundle = new Bundle();
+        bundle.putString("service_name", String.valueOf(tw.getText()));
+        changeFragment(new ServiceFragment(), bundle);
+    }
+
+    public void onClickItemProcesses(View v) {
+        final TextView tw = (TextView) v.findViewById(R.id.tw_processes_item_id);
+        Bundle bundle = new Bundle();
+        bundle.putInt("process_id", Integer.valueOf((String) tw.getText()));
+        changeFragment(new ProcessFragment(), bundle);
     }
 
     @Override
@@ -155,23 +178,21 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_disk) {
-            changeFragment(R.id.fragment_container, new DiskFragment());
+            changeFragment(new DiskFragment());
         } else if (id == R.id.nav_user_create) {
-            changeFragment(R.id.fragment_container, new UserCreateFragment());
+            changeFragment(new UserCreateFragment());
         } else if (id == R.id.nav_info) {
-            changeFragment(R.id.fragment_container, new InfoFragment());
-        } else if (id == R.id.nav_culture) {
-            changeFragment(R.id.fragment_container, new CultureFragment());
+            changeFragment(new InfoFragment());
         } else if (id == R.id.nav_user_get) {
-            changeFragment(R.id.fragment_container, new UserFragment());
+            changeFragment(new UserFragment());
         } else if (id == R.id.nav_users_get) {
-            changeFragment(R.id.fragment_container, new UsersFragment());
+            changeFragment(new UsersFragment());
         } else if (id == R.id.nav_services) {
-            changeFragment(R.id.fragment_container, new ServicesFragment());
+            changeFragment(new ServicesFragment());
         } else if (id == R.id.nav_processes) {
-            changeFragment(R.id.fragment_container, new ProcessesFragment());
+            changeFragment(new ProcessesFragment());
         } else if (id == R.id.nav_inactive) {
-            changeFragment(R.id.fragment_container, new InactiveFragment());
+            changeFragment(new InactiveFragment());
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

@@ -3,21 +3,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="cz.mowin.fragment.UserFragment"
+    tools:context="cz.mowin.fragment.ServiceFragment"
     android:weightSum="1">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:layout_gravity="center_horizontal">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="80dp">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="80dp"
-                android:text="User"
+                android:text="Service"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:gravity="left|center_vertical"
                 android:layout_alignParentTop="true"
@@ -30,48 +30,44 @@
                 android:scaleType="fitCenter"
                 android:background="@null"
                 android:gravity="right"
-                android:id="@+id/btn_user_help"
+                android:id="@+id/btn_service_help"
                 android:src="@drawable/help" />
         </LinearLayout>
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="80dp">
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="60dp"
-            android:text="@string/btn_run"
-            android:id="@+id/btn_user_run"
+            android:text="@string/btn_start"
+            android:id="@+id/btn_service_start"
             android:layout_centerVertical="true"
-            android:layout_alignParentEnd="true" />
-    </RelativeLayout>
+            android:layout_alignParentEnd="true"
+            android:layout_gravity="center_vertical"/>
 
-    <android.support.design.widget.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:text="@string/btn_stop"
+            android:id="@+id/btn_service_stop"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"
+            android:layout_gravity="center_vertical"/>
 
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:hint="@string/prompt_username"
-        android:maxLength="50"
-        android:id="@+id/tw_user_name" />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:text="@string/btn_restart"
+            android:id="@+id/btn_service_restart"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"
+            android:layout_gravity="center_vertical"/>
 
-    </android.support.design.widget.TextInputLayout>
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:layout_marginBottom="5dp"
-        android:background="#cccccc"
-        android:padding="5dp">
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/tw_user_group_output"
-        android:layout_gravity="center_horizontal"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
-
-    </ScrollView>
+    </LinearLayout>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -83,7 +79,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/tw_user_output"
+            android:id="@+id/tw_service_output"
             android:layout_gravity="center_horizontal"
             android:layout_weight="0.13"
             android:textAppearance="?android:attr/textAppearanceMedium" />
