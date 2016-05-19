@@ -59,8 +59,8 @@ public class DiskFragment extends Fragment {
                 api.showDiskSpace(new VolleyCallback() {
                     @Override
                     public void onSuccess(String response) {
-                        LinearLayout rl = (LinearLayout) view.findViewById(R.id.ll_charts);
-                        rl.removeAllViews();
+                        LinearLayout chartsLayout = (LinearLayout) view.findViewById(R.id.ll_charts);
+                        chartsLayout.removeAllViews();
                         DiskResponse[] disks;
                         Gson gson = new Gson();
 
@@ -75,11 +75,12 @@ public class DiskFragment extends Fragment {
                         for (int i = 0; i < disks.length; i++) {
                             tw.append(disks[i].Name.toString() + " ");
                             PieChart chart = (PieChart) new PieChart(getActivity());
-                            chart.setMinimumHeight(500);
-                            chart.setMinimumWidth(500);
+                            int height = chartsLayout.getHeight() / disks.length;
+                            chart.setMinimumHeight(height);
+                            chart.setMinimumWidth(height);
                             chart.setPadding(10, 10, 10, 10);
                             setData(chart, disks[i].Name, disks[i].Free, disks[i].Used);
-                            rl.addView(chart);
+                            chartsLayout.addView(chart);
                         }
                     }
                 });

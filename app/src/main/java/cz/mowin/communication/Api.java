@@ -197,7 +197,7 @@ public class Api {
 
         if (error instanceof TimeoutError) {
             Log.e(TAG, "TimeoutError: " + error.getNetworkTimeMs() + " ms");
-            Toast.makeText(activityCtx, "TimeoutError: " + error.getNetworkTimeMs() + " ms", Toast.LENGTH_LONG).show();
+            Toast.makeText(activityCtx, "TimeoutError", Toast.LENGTH_LONG).show();
         } else if (error instanceof NoConnectionError) {
             Log.e(TAG, "NoConnectionError: " + error.getMessage());
             Toast.makeText(activityCtx, "NoConnectionError: " + error.getMessage(), Toast.LENGTH_LONG).show();

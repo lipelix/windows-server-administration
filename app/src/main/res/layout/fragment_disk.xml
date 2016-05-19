@@ -58,20 +58,13 @@
         android:layout_gravity="center_horizontal" />
 
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/scrollView3"
-        android:layout_gravity="center_horizontal" >
-
-        <LinearLayout
+    <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:id="@+id/ll_charts"
-            android:layout_gravity="center_horizontal"></LinearLayout>
+            android:layout_gravity="center_horizontal" />
 
-    </ScrollView>
 
 
 </LinearLayout>

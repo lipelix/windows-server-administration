@@ -6,6 +6,7 @@ import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -37,7 +38,7 @@ import cz.mowin.fragment.UserFragment;
 import cz.mowin.fragment.UsersFragment;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, DefaultFragment.OnFragmentInteractionListener {
 
     private String TAG = "MainActivity";
     public Api api;
@@ -215,5 +216,10 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onStop() {
         super.onStop();
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+        Log.e(TAG, uri.toString());
     }
 }
