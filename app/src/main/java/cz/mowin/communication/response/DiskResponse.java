@@ -1,5 +1,9 @@
 package cz.mowin.communication.response;
 
+/**
+ * Model class for drive item. Response from server api is deserialized to this class.
+ * @author Libor Vachal
+ */
 public class DiskResponse {
 
     public String Name;

@@ -37,6 +37,15 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="60dp"
+            android:layout_marginRight="90dp"
+            android:text="@string/btn_disable"
+            android:id="@+id/btn_user_disable"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
             android:text="@string/btn_run"
             android:id="@+id/btn_user_run"
             android:layout_centerVertical="true"

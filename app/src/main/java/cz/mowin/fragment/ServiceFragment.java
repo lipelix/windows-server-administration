@@ -11,21 +11,15 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.google.gson.Gson;
-
-import org.w3c.dom.Text;
-
 import cz.mowin.R;
 import cz.mowin.communication.Api;
 import cz.mowin.communication.VolleyCallback;
-import cz.mowin.communication.response.CultureResponse;
 import cz.mowin.communication.response.ServiceResponse;
 import it.sephiroth.android.library.tooltip.Tooltip;
 
 /**
- * A simple {@link Fragment} subclass.
+ * Fragment for showing information about service.
  */
 public class ServiceFragment extends Fragment {
 
@@ -35,6 +29,13 @@ public class ServiceFragment extends Fragment {
         api = Api.getInstance(getActivity());
     }
 
+    /**
+     * Initialize view with buttons and layout. Register listeners for loading data
+     * @param inflater layout inflater
+     * @param container container view
+     * @param savedInstanceState saved data from previous interaction
+     * @return fragment view
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -138,6 +139,14 @@ public class ServiceFragment extends Fragment {
         return view;
     }
 
+    /**
+     * Call webserver and refresh view state
+     * @param name service name
+     * @param start start button view
+     * @param stop stop button view
+     * @param restart restart button view
+     * @param output output text view
+     */
     private void refreshState(String name, final Button start, final Button stop, final Button restart, final TextView output) {
         ServiceResponse service = null;
 

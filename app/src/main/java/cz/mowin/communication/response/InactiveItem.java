@@ -10,12 +10,32 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+/**
+ * Model class for user inactive item
+ * @author Libor Vachal
+ */
 public class InactiveItem {
 
+    /**
+     * Logon name in Active Directory
+     */
     public String samAccountName;
+
+    /**
+     * Type of object
+     */
     public String type;
+
+    /**
+     * Date of last logon into system
+     */
     public Date lastLogonDate;
 
+
+    /**
+     * Parse json response from server to model object
+     * @param object json response
+     */
     public InactiveItem(JSONObject object){
         try {
             this.samAccountName = object.getString("SamAccountName");
@@ -26,11 +46,15 @@ public class InactiveItem {
         } catch (JSONException e) {
             e.printStackTrace();
         } catch (ParseException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
 
+    /**
+     * Parse json response from server to list of model objects
+     * @param jsonObjects json response
+     * @return list of model objects
+     */
     public static ArrayList<InactiveItem> fromJson(JSONArray jsonObjects) {
         ArrayList<InactiveItem> users = new ArrayList<InactiveItem>();
         for (int i = 0; i < jsonObjects.length(); i++) {

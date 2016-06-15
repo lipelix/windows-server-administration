@@ -1,8 +1,9 @@
 package cz.mowin.communication.response;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
+/**
+ * Model class for process item. Response from server api is deserialized to this class.
+ * @author Libor Vachal
+ */
 public class ProcessResponse {
 
     private int Id;

@@ -6,6 +6,11 @@ package cz.mowin.communication.response;
  */
 public interface AuthorizableRequest {
 
-    public void addHeader(String header, String value);
+    /**
+     * Add header parameter
+     * @param header header key
+     * @param value header value
+     */
+    void addHeader(String header, String value);
 
 }

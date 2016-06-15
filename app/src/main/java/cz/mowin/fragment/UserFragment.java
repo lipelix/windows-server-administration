@@ -1,6 +1,5 @@
 package cz.mowin.fragment;
 
-
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
@@ -27,7 +26,7 @@ import cz.mowin.utils.Utils;
 import it.sephiroth.android.library.tooltip.Tooltip;
 
 /**
- * A simple {@link Fragment} subclass.
+ * Fragment for showing information about user.
  */
 public class UserFragment extends Fragment {
 
@@ -38,6 +37,13 @@ public class UserFragment extends Fragment {
     }
 
 
+    /**
+     * Initialize view with buttons and layout. Register listeners for loading data
+     * @param inflater layout inflater
+     * @param container container view
+     * @param savedInstanceState saved data from previous interaction
+     * @return fragment view
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -68,20 +74,38 @@ public class UserFragment extends Fragment {
                         try {
                             UserResponse resp = gson.fromJson(response, UserResponse.class);
                             output.setText(resp.toString());
-                            api.getUserMembership(String.valueOf(userName.getText()), new VolleyCallback() {
-                                @Override
-                                public void onSuccess(String response) {
-                                    try {
-                                        JSONArray groups = new JSONArray(response);
-                                        for (int i = 0; i < groups.length(); i++) {
-                                            outputGroups.append("\n\t" + groups.getString(i));
-                                        }
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
-                                        outputGroups.setText("No membership.");
-                                    }
-                                }
-                            });
+                            getUserMembership(String.valueOf(userName.getText()), outputGroups);
+                        } catch (com.google.gson.JsonSyntaxException e) {
+                            e.printStackTrace();
+                            Toast.makeText(AppController.getAppContext(), "Problem with response format.", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+            }
+        });
+
+        final Button buttonDisable = (Button) view.findViewById(R.id.btn_user_disable);
+        buttonDisable.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if (!Utils.isAlphaNumericDotSpace(userName.getText().toString().trim())) {
+                    userName.setError(getResources().getString(R.string.error_user_input));
+                    return;
+                }
+
+                AppController.hideKeyboardFrom(getActivity());
+
+                output.setText("");
+                outputGroups.setText("Member of: ");
+                api.disableUser(String.valueOf(userName.getText()), new VolleyCallback() {
+                    @Override
+                    public void onSuccess(String response) {
+                        Gson gson = new Gson();
+                        try {
+                            UserResponse resp = gson.fromJson(response, UserResponse.class);
+                            output.setText(resp.toString());
+                            getUserMembership(String.valueOf(userName.getText()), outputGroups);
                         } catch (com.google.gson.JsonSyntaxException e) {
                             e.printStackTrace();
                             Toast.makeText(AppController.getAppContext(), "Problem with response format.", Toast.LENGTH_LONG).show();
@@ -101,7 +125,7 @@ public class UserFragment extends Fragment {
                                 .closePolicy(new Tooltip.ClosePolicy()
                                         .insidePolicy(true, false)
                                         .outsidePolicy(true, false), 0)
-                                .text("By executing this script you will get information about Active Directory user. You will see overall information about user at the bottom and user membership at the top of the output.")
+                                .text("By executing this script you will get information about Active Directory user. You will see overall information about user at the bottom and user membership at the top of the output. You can also disable user account.")
                                 .maxWidth(500)
                                 .withOverlay(true)
                                 .fadeDuration(200)
@@ -111,6 +135,23 @@ public class UserFragment extends Fragment {
         });
 
         return view;
+    }
+
+    private void getUserMembership(String userName, final TextView outputGroups) {
+        api.getUserMembership(String.valueOf(userName), new VolleyCallback() {
+            @Override
+            public void onSuccess(String response) {
+                try {
+                    JSONArray groups = new JSONArray(response);
+                    for (int i = 0; i < groups.length(); i++) {
+                        outputGroups.append("\n\t" + groups.getString(i));
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    outputGroups.setText("No membership.");
+                }
+            }
+        });
     }
 
 }

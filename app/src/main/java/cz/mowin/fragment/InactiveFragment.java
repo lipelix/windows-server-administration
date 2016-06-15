@@ -1,6 +1,5 @@
 package cz.mowin.fragment;
 
-
 import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -24,7 +23,9 @@ import cz.mowin.communication.VolleyCallback;
 import cz.mowin.communication.response.InactiveItem;
 import it.sephiroth.android.library.tooltip.Tooltip;
 
-
+/**
+ * Fragment for showing information about inactive users and computers.
+ */
 public class InactiveFragment extends Fragment {
 
     protected Api api;
@@ -33,6 +34,13 @@ public class InactiveFragment extends Fragment {
         api = Api.getInstance(getActivity());
     }
 
+    /**
+     * Initialize view with buttons and layout. Register listeners for loading data
+     * @param inflater layout inflater
+     * @param container container view
+     * @param savedInstanceState saved data from previous interaction
+     * @return fragment view
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

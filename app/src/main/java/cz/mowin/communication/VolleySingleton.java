@@ -34,6 +34,9 @@ import javax.net.ssl.X509TrustManager;
 
 import cz.mowin.AppController;
 
+/**
+ * Class which making actual requests. Uses {@link com.android.volley} library. Implements singleton pattern.
+ */
 public class VolleySingleton {
 
     private static String TAG = "Volley";
@@ -43,6 +46,7 @@ public class VolleySingleton {
     private Collection<List<?>> trustedCAN;
 
     private static char[] KEYSTORE_PASSWORD = "123".toCharArray();
+
 
     private VolleySingleton() {
         imageLoader = new ImageLoader(requestQueue, new ImageLoader.ImageCache() {
@@ -61,6 +65,10 @@ public class VolleySingleton {
         });
     }
 
+    /**
+     * Get instance of class
+     * @return instance of class
+     */
     public static VolleySingleton getInstance() {
         if (instance == null) {
             instance = new VolleySingleton();
@@ -94,6 +102,10 @@ public class VolleySingleton {
         };
     }
 
+    /**
+     * Get request queue, register url stack and connection verifier.
+     * @return request queue
+     */
     public RequestQueue getRequestQueue() {
         if (requestQueue == null) {
 
@@ -116,6 +128,11 @@ public class VolleySingleton {
         return requestQueue;
     }
 
+    /**
+     * Get trust manager user for storing certificates and check certificate.
+     * @param trustManagers trust managers list
+     * @return verified trust manager
+     */
     private TrustManager[] getWrappedTrustManagers(TrustManager[] trustManagers) {
         final X509TrustManager originalTrustManager = (X509TrustManager) trustManagers[0];
         return new TrustManager[]{
@@ -143,9 +160,12 @@ public class VolleySingleton {
         };
     }
 
+    /**
+     * Create SSL connection, checks and verify connection according to certificate.
+     * @return secured connection or null if error
+     */
     public SSLSocketFactory newSslSocketFactory() {
         try {
-//            InputStream caInput = AppController.getAppContext().getResources().openRawResource(R.raw.localcert); // this cert file stored in \app\src\main\res\raw folder path
             InputStream caInput = AppController.getAppContext().openFileInput(AppController.CERT_FILE_NAME); 
             KeyStore keyStore = KeyStore.getInstance("PKCS12");
             keyStore.load(caInput, KEYSTORE_PASSWORD);
@@ -177,7 +197,7 @@ public class VolleySingleton {
         return null;
     }
 
-    public ImageLoader getImageLoader(){
-        return imageLoader;
-    }
+//    public ImageLoader getImageLoader(){
+//        return imageLoader;
+//    }
 }

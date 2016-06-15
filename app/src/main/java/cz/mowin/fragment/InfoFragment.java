@@ -39,6 +39,13 @@ public class InfoFragment extends Fragment {
 
     public InfoFragment() {}
 
+    /**
+     * Initialize view with buttons and layout.
+     * @param inflater layout inflater
+     * @param container container view
+     * @param savedInstanceState saved data from previous interaction
+     * @return fragment view
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -127,6 +134,9 @@ public class InfoFragment extends Fragment {
         return view;
     }
 
+    /**
+     * Refresh countdown of token expiration time
+     */
     private void refreshCountDown() {
         Long expires = Long.valueOf(AppController.loadLong("access_token_expires"));
         Date now = new Date(System.currentTimeMillis());
@@ -136,6 +146,9 @@ public class InfoFragment extends Fragment {
         counter.start();
     }
 
+    /**
+     * Simple Countdown class for maintaining and showing countdown
+     */
     public class CountDown extends CountDownTimer {
 
         public CountDown(long millisInFuture, long countDownInterval) {

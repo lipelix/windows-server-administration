@@ -67,7 +67,7 @@ public class AuthenticatedRequestCallback implements AccountManagerCallback<Bund
         String authToken = bundle.getString(AccountManager.KEY_AUTHTOKEN);
 
         if (!TextUtils.isEmpty(authToken)) {
-            Log.d(TAG, "Received authentication token " + authToken); // todo remove log message
+            Log.d(TAG, "Received authentication token " + authToken);
             try {
                 ((AuthorizableRequest) mRequest)
                         .addHeader(AUTH_TOKEN_HEADER, authToken);

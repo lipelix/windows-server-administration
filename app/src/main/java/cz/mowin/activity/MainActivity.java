@@ -20,7 +20,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import cz.mowin.AppController;
 import cz.mowin.R;
@@ -37,12 +36,21 @@ import cz.mowin.fragment.UserCreateFragment;
 import cz.mowin.fragment.UserFragment;
 import cz.mowin.fragment.UsersFragment;
 
+/**
+ * Main activity of application. Provides displaying fragments according to selected items in main panel. Also
+ * contains logic for displaying login in panel and for logout and exit buttons at top panel.
+ * @author Libor Vachal
+ */
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, DefaultFragment.OnFragmentInteractionListener {
 
     private String TAG = "MainActivity";
     public Api api;
 
+    /**
+     * Initialize and setup toolbar, api and set initial view to default fragment.
+     * @param savedInstanceState saved state from previous interaction
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,12 +89,21 @@ public class MainActivity extends AppCompatActivity
         changeFragment(new DefaultFragment());
     }
 
+    /**
+     * Change view to provided fragment.
+     * @param fragment targeted fragment, which will be loaded
+     */
     protected void changeFragment(Fragment fragment) {
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         ft.replace(R.id.fragment_container, fragment);
         ft.commit();
     }
 
+    /**
+     * Change view to provided fragment.
+     * @param fragment targeted fragment, which will be loaded
+     * @param bundle input attributes for fragment
+     */
     protected void changeFragment(Fragment fragment, Bundle bundle) {
         fragment.setArguments(bundle);
         FragmentTransaction ft = getFragmentManager().beginTransaction();
@@ -94,6 +111,10 @@ public class MainActivity extends AppCompatActivity
         ft.commit();
     }
 
+    /**
+     * Listener for click on list item in services fragment.
+     * @param v view of clicked item
+     */
     public void onClickItemServices(View v) {
         final TextView tw = (TextView) v.findViewById(R.id.tw_services_item_name);
         Bundle bundle = new Bundle();
@@ -101,6 +122,10 @@ public class MainActivity extends AppCompatActivity
         changeFragment(new ServiceFragment(), bundle);
     }
 
+    /**
+     * Listener for click on list item in processes fragment.
+     * @param v view of clicked item
+     */
     public void onClickItemProcesses(View v) {
         final TextView tw = (TextView) v.findViewById(R.id.tw_processes_item_id);
         Bundle bundle = new Bundle();
@@ -108,6 +133,10 @@ public class MainActivity extends AppCompatActivity
         changeFragment(new ProcessFragment(), bundle);
     }
 
+    /**
+     * Close toolbar if it´s opened and back button is pressed. Otherwise exit dialog
+     * is shown.
+     */
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -118,6 +147,9 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    /**
+     * Show dialog with application exit confirmation. If it´s processed invalidate authorization token and finish application.
+     */
     private void exit() {
         new AlertDialog.Builder(this)
                 .setMessage(getResources().getString(R.string.exit_confirm))
@@ -132,6 +164,9 @@ public class MainActivity extends AppCompatActivity
                 .show();
     }
 
+    /**
+     * Show dialog for logout confirmation. If it´s processed invalidate authorization token, finish this activity and starts LoginActivity.
+     */
     private void logout() {
         final Intent intent = new Intent(this, LoginActivity.class);
         new AlertDialog.Builder(this)
@@ -148,6 +183,11 @@ public class MainActivity extends AppCompatActivity
                 .show();
     }
 
+    /**
+     * Inflate the menu, adds items to the action bar if it is present. Also fills user login.
+     * @param menu inflated menu
+     * @return true
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -158,6 +198,11 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    /**
+     * Selection menu items logic.
+     * @param item selected item e.g. logout
+     * @return true
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -173,6 +218,11 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Selection toolbar item logic. Changes fragments according to selected item.
+     * @param item selected item e.g. DiskInfo
+     * @return true
+     */
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
@@ -201,6 +251,9 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    /**
+     * Called when activity is resumed (returned to foreground). Sets Api context to this activity.
+     */
     @Override
     protected void onResume() {
         super.onResume();
@@ -208,16 +261,26 @@ public class MainActivity extends AppCompatActivity
         api.setActivityContext(this);
     }
 
+    /**
+     * Called when activity starts.
+     */
     @Override
     public void onStart() {
         super.onStart();
     }
 
+    /**
+     * Called when activity stops.
+     */
     @Override
     public void onStop() {
         super.onStop();
     }
 
+    /**+
+     * Logging fragment interaction.
+     * @param uri selected fragment uri
+     */
     @Override
     public void onFragmentInteraction(Uri uri) {
         Log.e(TAG, uri.toString());

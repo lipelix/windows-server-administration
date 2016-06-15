@@ -21,7 +21,7 @@ import cz.mowin.utils.Utils;
 import it.sephiroth.android.library.tooltip.Tooltip;
 
 /**
- * A simple {@link Fragment} subclass.
+ * Fragment for creating new users.
  */
 public class UserCreateFragment extends Fragment {
 
@@ -32,6 +32,13 @@ public class UserCreateFragment extends Fragment {
     }
 
 
+    /**
+     * Initialize view with buttons and layout. Register listeners for loading data
+     * @param inflater layout inflater
+     * @param container container view
+     * @param savedInstanceState saved data from previous interaction
+     * @return fragment view
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

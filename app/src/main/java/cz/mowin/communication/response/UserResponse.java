@@ -1,5 +1,9 @@
 package cz.mowin.communication.response;
 
+/**
+ * Model class for user. Response from server api is deserialized to this class.
+ * @author Libor Vachal
+ */
 public class UserResponse {
 
     private String GivenName;

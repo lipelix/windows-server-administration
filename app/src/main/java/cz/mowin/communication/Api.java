@@ -33,7 +33,7 @@ import cz.mowin.AppController;
 import cz.mowin.utils.Utils;
 
 /**
- * Created by Libor on 5.3.2016.
+ * Main class for communication with webserver. Provides methods for calling api calls of services and authorization. Uses singleton pattern.
  */
 public class Api {
 
@@ -48,12 +48,20 @@ public class Api {
     private Context activityCtx;
 
 
+    /**
+     * Private constructor
+     * @param context activity context
+     */
     private Api(Context context) {
         mCtx = context;
         volley = VolleySingleton.getInstance();
-//        host = AppController.getPref().getString("host", BuildConfig.API_URL);
     }
 
+    /**
+     * Get instance of Class
+     * @param context activity context
+     * @return class instance
+     */
     public static synchronized Api getInstance(Context context) {
         if (mInstance == null) {
             mInstance = new Api(context);
@@ -62,6 +70,10 @@ public class Api {
         return mInstance;
     }
 
+    /**
+     * Sets activity context
+     * @param ctx current activity context
+     */
     public void setActivityContext(Context ctx) {
         activityCtx = ctx;
         progressDialog = new ProgressDialog(activityCtx);
@@ -69,10 +81,19 @@ public class Api {
         progressDialog.setCancelable(false);
     }
 
+    /**
+     * Sets webserver url
+     * @param url webserver url
+     */
     public void setHost(String url) {
         host = url;
     }
 
+    /**
+     * Make GET request to webserver
+     * @param url url of webserver
+     * @param callback function called when response is returned
+     */
     public void stringReq(final String url, final VolleyCallback callback) {
         progressDialog.show();
 
@@ -90,6 +111,7 @@ public class Api {
                         try {
                             JSONObject json = new JSONObject(response);
                             if (!json.isNull("error")) {
+                                Toast.makeText(activityCtx, json.getString("error"), Toast.LENGTH_LONG).show();
                                 return;
                             }
                         } catch (JSONException e) {
@@ -118,14 +140,15 @@ public class Api {
             }
         };
 
-
-//        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
-//                5000,
-//                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-//                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         volley.getRequestQueue().add(stringRequest);
     }
 
+    /**
+     * Make POST request to webserver
+     * @param url url of webserver
+     * @param callback function called when response is returned
+     * @param params POST parameters
+     */
     private void stringPostReq(String url, final String params, final VolleyCallback callback) {
         progressDialog.show();
 
@@ -170,8 +193,6 @@ public class Api {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> header = new HashMap<String, String>();
                 header.put("Authorization", "Bearer " + AppController.getPref().getString("access_token", ""));
-//                params.put("Content-Type", "application/json");
-
                 return header;
             }
 
@@ -192,6 +213,10 @@ public class Api {
         volley.getRequestQueue().add(stringRequest);
     }
 
+    /**
+     * Handling error responses from HTTP calls
+     * @param error error object with error details
+     */
     private void handleErrorResponse(VolleyError error) {
         progressDialog.dismiss();
 
@@ -228,6 +253,10 @@ public class Api {
         }
     }
 
+    /**
+     * Call for getting web certificate
+     * @param callback function called when response is returned
+     */
     public void getCert(final VolleyCallback callback) {
         progressDialog.show();
 
@@ -245,7 +274,7 @@ public class Api {
                                     outputStream = AppController.getAppContext().openFileOutput(AppController.CERT_FILE_NAME, Context.MODE_PRIVATE);
                                     outputStream.write(response);
                                     outputStream.close();
-                                    Toast.makeText(AppController.getAppContext(), "Download certificate complete", Toast.LENGTH_LONG).show();
+//                                    Toast.makeText(AppController.getAppContext(), "Download certificate complete", Toast.LENGTH_LONG).show();
                                     Log.e(TAG, "Download certificate complete");
 
                                     callback.onSuccess("ok");
@@ -281,11 +310,21 @@ public class Api {
         mRequestQueue.add(request);
     }
 
+    /**
+     * Call for test connection with webserver
+     * @param callback function called when response is returned
+     */
     public void ping(VolleyCallback callback) {
         String url = "https://" + host + "api/account/ping";
         stringReq(url, callback);
     }
 
+    /**
+     * Call for getting authorization token
+     * @param username user login name
+     * @param password user password
+     * @param callback function called when response is returned
+     */
     public void getToken(String username, String password, VolleyCallback callback) {
         String url = protocol + "://" + host + "/api/token";
 
@@ -297,16 +336,11 @@ public class Api {
         stringPostReq(url, Utils.mapToString(params), callback);
     }
 
-    public void isValid(String username, String password, VolleyCallback callback) {
-        String url = protocol + "://" + host + "/api/account/isValid";
-
-        Map<String, String> params = new HashMap<String, String>();
-        params.put("username", username);
-        params.put("password", password);
-
-        stringPostReq(url, Utils.mapToString(params), callback);
-    }
-
+    /**
+     * Call for getting user from Active Directory
+     * @param name Active Directory logon name
+     * @param callback function called when response is returned
+     */
     public void getUser(String name, VolleyCallback callback) {
         String url = protocol + "://" + host + "/api/pscripts/runscriptpost/getUser";
 
@@ -316,6 +350,25 @@ public class Api {
         stringPostReq(url, Utils.mapToString(params), callback);
     }
 
+    /**
+     * Call for disabling user in Active Directory
+     * @param name Active Directory logon name
+     * @param callback function called when response is returned
+     */
+    public void disableUser(String name, VolleyCallback callback) {
+        String url = protocol + "://" + host + "/api/pscripts/runscriptpost/disableUser";
+
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("User", name);
+
+        stringPostReq(url, Utils.mapToString(params), callback);
+    }
+
+    /**
+     * Call for getting user membership from Active Directory
+     * @param name Active Directory logon name
+     * @param callback function called when response is returned
+     */
     public void getUserMembership(String name, VolleyCallback callback) {
         String url = protocol + "://" + host + "/api/pscripts/runscriptpost/getUserMembership";
 
@@ -325,31 +378,58 @@ public class Api {
         stringPostReq(url, Utils.mapToString(params), callback);
     }
 
+    /**
+     * Call for getting users from Active Directory
+     * @param callback function called when response is returned
+     */
     public void getUsers(VolleyCallback callback) {
         String url = protocol + "://" + host + "/api/pscripts/runscript/getUsers";
         stringReq(url, callback);
     }
 
+    /**
+     * Call for getting available services on server
+     * @param callback function called when response is returned
+     */
     public void getServices(VolleyCallback callback) {
         String url = protocol + "://" + host + "/api/pscripts/runscript/getServices";
         stringReq(url, callback);
     }
 
+    /**
+     * Call for getting running processes on server
+     * @param callback function called when response is returned
+     */
     public void getProcesses(VolleyCallback callback) {
         String url = protocol + "://" + host + "/api/pscripts/runscript/getProcesses";
         stringReq(url, callback);
     }
 
+    /**
+     * Call for getting inactive users and computers in Active Directory
+     * @param callback function called when response is returned
+     */
     public void getInactive(VolleyCallback callback) {
         String url = protocol + "://" + host + "/api/pscripts/runscript/getInactive";
         stringReq(url, callback);
     }
 
+    /**
+     * Call for getting information about drives on server
+     * @param callback function called when response is returned
+     */
     public void showDiskSpace(VolleyCallback callback) {
         String url = protocol + "://" + host + "/api/pscripts/runscript/showDiskSpace";
         stringReq(url, callback);
     }
 
+    /**
+     * Call for create new user in Active Directory
+     * @param name user name
+     * @param login user windows login
+     * @param password user password
+     * @param callback function called when response is returned
+     */
     public void createUser(String name, String login, String password, VolleyCallback callback) {
         String url = protocol + "://" + host + "/api/pscripts/runscriptpost/createUser";
 
@@ -361,6 +441,11 @@ public class Api {
         stringPostReq(url, Utils.mapToString(params), callback);
     }
 
+    /**
+     * Call for getting information about service
+     * @param name name of service
+     * @param callback function called when response is returned
+     */
     public void getService(String name, VolleyCallback callback) {
         String url = protocol + "://" + host + "/api/pscripts/runscriptpost/getService";
 
@@ -370,6 +455,11 @@ public class Api {
         stringPostReq(url, Utils.mapToString(params), callback);
     }
 
+    /**
+     * Call for starting service
+     * @param name name of service
+     * @param callback function called when response is returned
+     */
     public void startService(String name, VolleyCallback callback) {
         String url = protocol + "://" + host + "/api/pscripts/runscriptpost/startService";
 
@@ -379,6 +469,11 @@ public class Api {
         stringPostReq(url, Utils.mapToString(params), callback);
     }
 
+    /**
+     * Call for stopping service
+     * @param name name of service
+     * @param callback function called when response is returned
+     */
     public void stopService(String name, VolleyCallback callback) {
         String url = protocol + "://" + host + "/api/pscripts/runscriptpost/stopService";
 
@@ -388,6 +483,11 @@ public class Api {
         stringPostReq(url, Utils.mapToString(params), callback);
     }
 
+    /**
+     * Call for restarting service
+     * @param name name of service
+     * @param callback function called when response is returned
+     */
     public void restartService(String name, VolleyCallback callback) {
         String url = protocol + "://" + host + "/api/pscripts/runscriptpost/restartService";
 
@@ -397,6 +497,11 @@ public class Api {
         stringPostReq(url, Utils.mapToString(params), callback);
     }
 
+    /**
+     * Call for getting information about process
+     * @param id id of process
+     * @param callback function called when response is returned
+     */
     public void getProcess(int id, VolleyCallback callback) {
         String url = protocol + "://" + host + "/api/pscripts/runscriptpost/getProcess";
 
@@ -406,6 +511,11 @@ public class Api {
         stringPostReq(url, Utils.mapToString(params), callback);
     }
 
+    /**
+     * Call for stopping process
+     * @param id id of process
+     * @param callback function called when response is returned
+     */
     public void stopProcess(int id, VolleyCallback callback) {
         String url = protocol + "://" + host + "/api/pscripts/runscriptpost/stopProcess";
 

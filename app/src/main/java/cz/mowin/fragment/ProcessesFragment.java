@@ -1,6 +1,5 @@
 package cz.mowin.fragment;
 
-
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
@@ -30,7 +29,9 @@ import cz.mowin.communication.VolleyCallback;
 import cz.mowin.communication.response.ProcessItem;
 import it.sephiroth.android.library.tooltip.Tooltip;
 
-
+/**
+ * Fragment for showing information about processes.
+ */
 public class ProcessesFragment extends Fragment {
 
     protected Api api;
@@ -39,6 +40,13 @@ public class ProcessesFragment extends Fragment {
         api = Api.getInstance(getActivity());
     }
 
+    /**
+     * Initialize view with buttons and layout. Register listeners and adapters for loading data
+     * @param inflater layout inflater
+     * @param container container view
+     * @param savedInstanceState saved data from previous interaction
+     * @return fragment view
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

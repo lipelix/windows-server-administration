@@ -1,7 +1,8 @@
 package cz.mowin.communication.response;
 
 /**
- * Created by Libor on 26.3.2016.
+ * Model class for error response. Error response from server api is deserialized to this class.
+ * @author Libor Vachal
  */
 public class ErrorResponse {
 

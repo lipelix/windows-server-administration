@@ -1,5 +1,9 @@
 package cz.mowin.communication.response;
 
+/**
+ * Model class for service item. Response from server api is deserialized to this class.
+ * @author Libor Vachal
+ */
 public class ServiceResponse {
 
     private String DisplayName;
@@ -7,6 +11,10 @@ public class ServiceResponse {
     private int StartType;
     private int Status;
 
+    /**
+     * Get string of service status
+     * @return Running, Stopped or Unknown
+     */
     public String getStatus() {
         if (Status == 4)
             return "Running";
@@ -16,6 +24,10 @@ public class ServiceResponse {
             return "Unknown";
     }
 
+    /**
+     * Get string of service start type
+     * @return Automatic, Manual, Disabled or Unknown
+     */
     public String getStartType() {
         if (StartType == 2)
             return "Automatic";

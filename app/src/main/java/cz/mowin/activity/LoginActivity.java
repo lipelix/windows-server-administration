@@ -3,11 +3,9 @@ package cz.mowin.activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
-
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
-import android.util.Patterns;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -17,8 +15,6 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-
-import com.android.volley.VolleyError;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,7 +29,8 @@ import cz.mowin.communication.VolleyCallback;
 import cz.mowin.utils.Utils;
 
 /**
- * A login screen that offers login via username/password.
+ * This activity maintain login part of application.
+ * @author Libor Vachal
  */
 public class LoginActivity extends AppCompatActivity {
 
@@ -45,6 +42,10 @@ public class LoginActivity extends AppCompatActivity {
     private ProgressDialog progressDialog;
     private Api api;
 
+    /**
+     * Method called right after activity start. It initialize variables and layout.
+     * @param savedInstanceState saved state from previous interactions
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -100,18 +101,10 @@ public class LoginActivity extends AppCompatActivity {
             mHostView.setError(getString(R.string.error_field_required));
             focusView = mHostView;
             cancel = true;
-        } else if (!isHostValid(host)) {
-            mHostView.setError(getString(R.string.error_invalid_host));
-            focusView = mHostView;
-            cancel = true;
         }
 
         if (TextUtils.isEmpty(password)) {
             mPasswordView.setError(getString(R.string.error_field_required));
-            focusView = mPasswordView;
-            cancel = true;
-        } else if (!isPasswordValid(password)) {
-            mPasswordView.setError(getString(R.string.error_invalid_password));
             focusView = mPasswordView;
             cancel = true;
         }
@@ -140,10 +133,15 @@ public class LoginActivity extends AppCompatActivity {
                     callGetToken(login, password);
                 }
             });
-
         }
     }
 
+    /**
+     * Call for authorization token. Final part of authorization process, if it succeed, token and login are saved to shared prefs. then
+     * MainActivity is started and this activity stopped.
+     * @param login user login
+     * @param password user password
+     */
     private void callGetToken(final String login, String password) {
         final Intent intent = new Intent(this, MainActivity.class);
         api.getToken(login, password, new VolleyCallback() {
@@ -168,6 +166,9 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Called when activity is resumed (returned to foreground). Pre-fill host and login from shared prefs.
+     */
     @Override
     protected void onResume() {
         super.onResume();
@@ -184,7 +185,6 @@ public class LoginActivity extends AppCompatActivity {
             actvLogin.setText(AppController.getPref().getString("login", ""));
         }
 
-
         ArrayList<String> hosts = new ArrayList<String>();
         hosts.add(AppController.getPref().getString("host", ""));
         ArrayAdapter<String> hostAdapter = new ArrayAdapter<String>(this, android.R.layout.select_dialog_item, hosts);
@@ -194,18 +194,6 @@ public class LoginActivity extends AppCompatActivity {
             actvHost.setAdapter(hostAdapter);
             actvHost.setText(AppController.getPref().getString("host", ""));
         }
-    }
-
-    private boolean isLoginValid(String login) {
-        return login.matches("[a-zA-Z0-9]+");
-    }
-
-    private boolean isPasswordValid(String password) {
-        return password.matches("[a-zA-Z0-9]+");
-    }
-
-    private boolean isHostValid(String host) {
-        return Patterns.WEB_URL.matcher(host).matches();
     }
 }
 

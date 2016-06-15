@@ -23,7 +23,7 @@ import cz.mowin.communication.response.ServiceResponse;
 import it.sephiroth.android.library.tooltip.Tooltip;
 
 /**
- * A simple {@link Fragment} subclass.
+ * Fragment for showing information about disks.
  */
 public class ProcessFragment extends Fragment {
 
@@ -33,6 +33,13 @@ public class ProcessFragment extends Fragment {
         api = Api.getInstance(getActivity());
     }
 
+    /**
+     * Initialize view with buttons and layout. Register listeners for loading data
+     * @param inflater layout inflater
+     * @param container container view
+     * @param savedInstanceState saved data from previous interaction
+     * @return fragment view
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -92,6 +99,11 @@ public class ProcessFragment extends Fragment {
         return view;
     }
 
+    /**
+     * Call webserver and refresh process view
+     * @param id process id
+     * @param output output view
+     */
     private void refreshState(final int id, final TextView output) {
         api.getProcess(id, new VolleyCallback() {
             @Override

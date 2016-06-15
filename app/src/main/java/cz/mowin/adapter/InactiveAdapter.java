@@ -14,11 +14,29 @@ import java.util.ArrayList;
 import cz.mowin.R;
 import cz.mowin.communication.response.InactiveItem;
 
+/**
+ * Adapter class acts as a bridge between an AdapterView and the underlying data for that view. The Adapter provides access to the data items. The Adapter is also responsible for making a View for each item in the data set.
+ * This class bridges data of inactive computers and users.
+ * @author Libor Vachal
+ */
 public class InactiveAdapter extends ArrayAdapter<InactiveItem> {
+
+    /**
+     * Adapter constructor.
+     * @param context activity context
+     * @param inactives list of inactive items
+     */
     public InactiveAdapter(Context context, ArrayList<InactiveItem> inactives) {
         super(context, 0, inactives);
     }
 
+    /**
+     * Get view of bridged item
+     * @param position position in collection
+     * @param convertView item view
+     * @param parent parent view
+     * @return view of converted item
+     */
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 

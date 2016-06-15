@@ -31,7 +31,9 @@ import cz.mowin.communication.VolleyCallback;
 import cz.mowin.communication.response.ServiceItem;
 import it.sephiroth.android.library.tooltip.Tooltip;
 
-
+/**
+ * Fragment for showing information about services.
+ */
 public class ServicesFragment extends Fragment {
 
     protected Api api;
@@ -40,6 +42,13 @@ public class ServicesFragment extends Fragment {
         api = Api.getInstance(getActivity());
     }
 
+    /**
+     * Initialize view with buttons and layout. Register listeners and adapters for loading data
+     * @param inflater layout inflater
+     * @param container container view
+     * @param savedInstanceState saved data from previous interaction
+     * @return fragment view
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
