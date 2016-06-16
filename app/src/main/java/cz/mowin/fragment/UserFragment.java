@@ -67,20 +67,7 @@ public class UserFragment extends Fragment {
 
                 output.setText("");
                 outputGroups.setText("Member of: ");
-                api.getUser(String.valueOf(userName.getText()), new VolleyCallback() {
-                    @Override
-                    public void onSuccess(String response) {
-                        Gson gson = new Gson();
-                        try {
-                            UserResponse resp = gson.fromJson(response, UserResponse.class);
-                            output.setText(resp.toString());
-                            getUserMembership(String.valueOf(userName.getText()), outputGroups);
-                        } catch (com.google.gson.JsonSyntaxException e) {
-                            e.printStackTrace();
-                            Toast.makeText(AppController.getAppContext(), "Problem with response format.", Toast.LENGTH_LONG).show();
-                        }
-                    }
-                });
+                getUser(String.valueOf(userName.getText()), output, outputGroups);
             }
         });
 
@@ -101,15 +88,7 @@ public class UserFragment extends Fragment {
                 api.disableUser(String.valueOf(userName.getText()), new VolleyCallback() {
                     @Override
                     public void onSuccess(String response) {
-                        Gson gson = new Gson();
-                        try {
-                            UserResponse resp = gson.fromJson(response, UserResponse.class);
-                            output.setText(resp.toString());
-                            getUserMembership(String.valueOf(userName.getText()), outputGroups);
-                        } catch (com.google.gson.JsonSyntaxException e) {
-                            e.printStackTrace();
-                            Toast.makeText(AppController.getAppContext(), "Problem with response format.", Toast.LENGTH_LONG).show();
-                        }
+                        getUser(String.valueOf(userName.getText()), output, outputGroups);
                     }
                 });
             }
@@ -137,6 +116,11 @@ public class UserFragment extends Fragment {
         return view;
     }
 
+    /**
+     * Get user membership
+     * @param userName name of User in Active Directory
+     * @param outputGroups output for groups membership response
+     */
     private void getUserMembership(String userName, final TextView outputGroups) {
         api.getUserMembership(String.valueOf(userName), new VolleyCallback() {
             @Override
@@ -149,6 +133,29 @@ public class UserFragment extends Fragment {
                 } catch (JSONException e) {
                     e.printStackTrace();
                     outputGroups.setText("No membership.");
+                }
+            }
+        });
+    }
+
+    /**
+     * Get user information from Active Directory
+     * @param output output for response
+     * @param userName name of User in Active Directory
+     * @param outputGroups output for groups membership response
+     */
+    private void getUser(final String userName, final TextView output, final TextView outputGroups) {
+        api.getUser(String.valueOf(userName), new VolleyCallback() {
+            @Override
+            public void onSuccess(String response) {
+                Gson gson = new Gson();
+                try {
+                    UserResponse resp = gson.fromJson(response, UserResponse.class);
+                    output.setText(resp.toString());
+                    getUserMembership(String.valueOf(userName), outputGroups);
+                } catch (com.google.gson.JsonSyntaxException e) {
+                    e.printStackTrace();
+                    Toast.makeText(AppController.getAppContext(), "Problem with response format.", Toast.LENGTH_LONG).show();
                 }
             }
         });
