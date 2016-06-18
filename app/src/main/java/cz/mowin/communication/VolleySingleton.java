@@ -17,7 +17,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.KeyStore;
 import java.security.SecureRandom;
+import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
 import java.util.Iterator;
@@ -45,7 +47,7 @@ public class VolleySingleton {
     private RequestQueue requestQueue;
     private Collection<List<?>> trustedCAN;
 
-    private static char[] KEYSTORE_PASSWORD = "123".toCharArray();
+    private static char[] KEYSTORE_PASSWORD = "*6Ua4M6XE^pJs?MQ:".toCharArray();
 
 
     private VolleySingleton() {
@@ -77,7 +79,7 @@ public class VolleySingleton {
     }
 
     /**
-     * Verifies hostname of server machine
+     * Verify if hostname of server machine matches dns names provided by certificate
      * @return HostnameVerifier
      */
     private HostnameVerifier getHostnameVerifier() {
@@ -129,49 +131,16 @@ public class VolleySingleton {
     }
 
     /**
-     * Get trust manager user for storing certificates and check certificate.
-     * @param trustManagers trust managers list
-     * @return verified trust manager
-     */
-    private TrustManager[] getWrappedTrustManagers(TrustManager[] trustManagers) {
-        final X509TrustManager originalTrustManager = (X509TrustManager) trustManagers[0];
-        return new TrustManager[]{
-                new X509TrustManager() {
-                    public X509Certificate[] getAcceptedIssuers() {
-                        return originalTrustManager.getAcceptedIssuers();
-                    }
-
-                    public void checkClientTrusted(X509Certificate[] certs, String authType) {
-                        try {
-                            originalTrustManager.checkClientTrusted(certs, authType);
-                        } catch (CertificateException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    public void checkServerTrusted(X509Certificate[] certs, String authType) {
-                        try {
-                            originalTrustManager.checkServerTrusted(certs, authType);
-                        } catch (CertificateException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-        };
-    }
-
-    /**
      * Create SSL connection, checks and verify connection according to certificate.
      * @return secured connection or null if error
      */
     public SSLSocketFactory newSslSocketFactory() {
         try {
-            InputStream caInput = AppController.getAppContext().openFileInput(AppController.CERT_FILE_NAME); 
-            KeyStore keyStore = KeyStore.getInstance("PKCS12");
-            keyStore.load(caInput, KEYSTORE_PASSWORD);
-            X509Certificate ca = (X509Certificate) keyStore.getCertificate(keyStore.aliases().nextElement());
-            keyStore.setCertificateEntry("ca", ca);
+            InputStream caInput = AppController.getAppContext().openFileInput(AppController.CERT_FILE_NAME);
+            KeyStore keyStore = ConvertCerToBKS(caInput, "mowincert", KEYSTORE_PASSWORD);
+            caInput.close();
 
+            X509Certificate ca = (X509Certificate) keyStore.getCertificate(keyStore.aliases().nextElement());
             trustedCAN = ca.getSubjectAlternativeNames();
             Log.i(TAG, "SSL | DN: " + ca.getSubjectDN() + " SAN: " + trustedCAN.toString());
 
@@ -179,25 +148,37 @@ public class VolleySingleton {
             TrustManagerFactory tmf = TrustManagerFactory.getInstance(tmfAlgorithm);
             tmf.init(keyStore);
 
-            TrustManager[] wrappedTrustManagers = getWrappedTrustManagers(tmf.getTrustManagers());
-
             SSLContext sslContext = SSLContext.getInstance("TLS");
-            sslContext.init(null, wrappedTrustManagers, new SecureRandom());
+            sslContext.init(null, tmf.getTrustManagers(), new SecureRandom());
 
             return sslContext.getSocketFactory();
+
         } catch (FileNotFoundException e) {
             Log.e(TAG, "SSL | Error during certificate file opening");
+            Toast.makeText(AppController.getAppContext(), "SSL error during certificate file opening", Toast.LENGTH_LONG).show();
             e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
             Log.e(TAG, e.getMessage());
         }
 
-        Toast.makeText(AppController.getAppContext(), "SSL error during certificate file opening", Toast.LENGTH_LONG).show();
         return null;
     }
 
-//    public ImageLoader getImageLoader(){
-//        return imageLoader;
-//    }
+    public KeyStore ConvertCerToBKS(InputStream cerStream, String alias, char [] password) {
+        KeyStore keyStore = null;
+        try
+        {
+            keyStore = KeyStore.getInstance("BKS", "BC");
+            CertificateFactory factory = CertificateFactory.getInstance("X.509", "BC");
+            Certificate certificate = factory.generateCertificate(cerStream);
+            keyStore.load(null, password);
+            keyStore.setCertificateEntry(alias, certificate);
+        }
+        catch (Exception e)  {
+            e.printStackTrace();
+            Log.e(TAG, e.getMessage());
+        }
+        return keyStore;
+    }
 }

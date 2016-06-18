@@ -13,8 +13,8 @@ public class ProcessItem {
 
 
     public int id;
-    public double cpu;
-    public double cpuPercent;
+    public String cpu;
+    public String cpuPercent;
     public String name;
     public String description;
     public double ws;
@@ -26,8 +26,8 @@ public class ProcessItem {
     public ProcessItem(JSONObject object){
         try {
             this.id = object.getInt("Id");
-            this.cpu = object.getDouble("CPU");
-            this.cpuPercent = object.getDouble("CPUPercent");
+            this.cpu = object.getString("CPU");
+            this.cpuPercent = object.getString("CPUPercent");
             this.name = object.getString("Name");
             this.description = object.getString("Description");
             this.ws = object.getDouble("WS");

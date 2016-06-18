@@ -60,7 +60,7 @@ public class UserCreateFragment extends Fragment {
                 } else if (!Utils.isAlphaNumericUnderscore(login.getText().toString())) {
                     login.setError(getString(R.string.error_invalid_alphanumericunderscore));
                     return;
-                } else if (Utils.hasSpace(pass.getText().toString().trim())) {
+                } else if (Utils.isAlphaNumeric(pass.getText().toString().trim())) {
                     pass.setError(getString(R.string.error_invalid_create_pass));
                     return;
                 }
@@ -71,18 +71,6 @@ public class UserCreateFragment extends Fragment {
                     @Override
                     public void onSuccess(String response) {
 
-                        api.getUser(login.getText().toString(), new VolleyCallback() {
-                            @Override
-                            public void onSuccess(String response) {
-                                Gson gson = new Gson();
-                                UserCreateResponse resp = gson.fromJson(response, UserCreateResponse.class);
-                                output.setText(resp.toString());
-                            }
-
-                        });
-                    }
-
-                    public void onError(String response) {
                         api.getUser(login.getText().toString(), new VolleyCallback() {
                             @Override
                             public void onSuccess(String response) {

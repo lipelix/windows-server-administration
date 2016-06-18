@@ -69,7 +69,7 @@
     <string name="Process">Process</string>
     <string name="tooltip_process">This is process maintenance part. It allows you to stop the process.</string>
     <string name="error_user_input">Allowed are only alphanumeric characters with dot, space and underscore. Input also can´t be empty.</string>
-    <string name="error_invalid_create_pass">Password can\'t have space character and can\'t be empty.</string>
+    <string name="error_invalid_create_pass">Allowed are only alphanumeric characters.</string>
     <string name="tooltip_create_user">This part allows you to create Active Directory user. You can set Name of User, Login and Password. Created user will become enabled when passwords meets server password requirements, otherwise User will be also created, but will became disabled.</string>
     <string name="stop_process_confirm">Are you sure you want to stop process?</string>
     <string name="stop_service_confirm">Are you sure you want to stop service?</string>

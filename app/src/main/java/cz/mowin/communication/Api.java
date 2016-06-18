@@ -276,6 +276,7 @@ public class Api {
                                     outputStream.close();
 //                                    Toast.makeText(AppController.getAppContext(), "Download certificate complete", Toast.LENGTH_LONG).show();
                                     Log.e(TAG, "Download certificate complete");
+                                    Log.e(TAG, response.toString());
 
                                     callback.onSuccess("ok");
                                 } catch (Exception e) {
