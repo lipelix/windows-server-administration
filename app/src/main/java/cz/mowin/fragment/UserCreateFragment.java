@@ -60,7 +60,7 @@ public class UserCreateFragment extends Fragment {
                 } else if (!Utils.isAlphaNumericUnderscore(login.getText().toString())) {
                     login.setError(getString(R.string.error_invalid_alphanumericunderscore));
                     return;
-                } else if (Utils.isAlphaNumeric(pass.getText().toString().trim())) {
+                } else if (!Utils.isAlphaNumeric(pass.getText().toString().trim())) {
                     pass.setError(getString(R.string.error_invalid_create_pass));
                     return;
                 }

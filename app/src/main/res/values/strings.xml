@@ -17,7 +17,7 @@
     <string name="get_user">User</string>
     <string name="error_empty_input">Input can\'t be empty!</string>
     <item name="btn_run" type="id">Run</item>
-    <string name="title_activity_login">MoWin - Sign in</string>
+    <string name="title_activity_login">MoWin</string>
 
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
